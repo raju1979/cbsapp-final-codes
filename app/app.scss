@@ -1,0 +1,107 @@
+// http://ionicframework.com/docs/v2/theming/
+// App Global Sass
+// --------------------------------------------------
+// Put style rules here that you want to apply globally. These
+// styles are for the entire app and not just one component.
+// Additionally, this file can be also used as an entry point
+// to import other Sass files to be included in the output CSS.
+//
+// Shared Sass variables, which can be used to adjust Ionic's
+// default Sass variables, belong in "theme/variables.scss".
+//
+// To declare rules for a specific mode, create a child rule
+// for the .md, .ios, or .wp mode classes. The mode class is
+// automatically applied to the <body> element in the app.
+$grey1:#d2d2d2;
+
+ion-app.md,
+ion-app.ios,
+ion-app.wp{
+        font-family: "Arsenal", sans-serif !important;
+}
+ion-header{
+    
+        font-family: "Arsenal", sans-serif !important;
+}
+.menu-inner{ 
+        font-family: "Arsenal", sans-serif !important;
+}
+.menu2Outer {
+    background: #272727;
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+}
+
+.menu1Outer {
+    background: #272727;
+    width: 100%;
+    height: 100%;
+}
+
+.genereSideListItem {
+    height:50px;
+    line-height: 40px;
+    border-bottom: 1px solid #444348;
+    color: #fff;
+}
+
+.userpic {
+    width: 100%;
+    height: 250px;
+    background: url(../assets/img/userbg.jpg);
+    background-size: cover;
+    background-position: bottom center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.userpicimg {
+    width: 50%;
+    height: auto;
+    border-radius: 50%;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.5);
+}
+
+.userNameText {
+    font-weight: bold;
+    color: #fff;
+    text-transform: capitalize;
+    font-size: 1.5em;
+    margin-top: 1em;
+}
+
+.listButtonWhite {
+    color: #fff; 
+}
+
+.leftSideListItem {
+    height: 50px;
+    width: 95%;
+    line-height: 40px;
+    border-bottom: 1px solid #444348;
+    color: #fff;
+    margin: 0 auto;
+}
+
+.toolbar-content {
+    order: 4;
+}
+
+button.roundButton {
+    border-radius: 7px;
+    padding-left: 20px;
+    padding-right: 20px;
+    font-weight: bold;
+}
+
+span.logOutAlertText{
+    font-weight: bold;
+    color: #ff5252;
+}
+
+.fadeIt{
+    opacity:0 !important;
+}

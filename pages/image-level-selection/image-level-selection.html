@@ -1,0 +1,30 @@
+<!--
+  Generated template for the ImageLevelSelection page.
+
+  See http://ionicframework.com/docs/v2/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar color="appblue">
+    <ion-title align="center">Image Based Questions</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <!--<p>{{currentLevel}}</p>-->
+  <div id="buttonContainer" *ngIf="currentLevel > -1">
+    <button ion-button block color="appblue" [disabled]="currentLevel == 1" (click)="navigateToImageTestScreen()">Level - 1</button>
+    <button ion-button block color="appblue" [disabled]="currentLevel == 0" (click)="navigateToImageTestScreen()" *ngIf="!isGuestUser">Level - 2</button>
+  </div>
+
+
+
+
+  <ion-fab right bottom *ngIf="shouldShowResetBtn()" [@enterAnimation]="allLevelCleared" (click)="resetTest()">
+    <button ion-fab color="appblue"><ion-icon name="refresh"></ion-icon></button>
+  </ion-fab>
+
+</ion-content>

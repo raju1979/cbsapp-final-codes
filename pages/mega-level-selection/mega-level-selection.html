@@ -1,0 +1,31 @@
+<!--
+  Generated template for the ImageLevelSelection page.
+
+  See http://ionicframework.com/docs/v2/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar color="appblue">
+    <ion-title align="center"> Mega Grand Test</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <!--<p>{{currentLevel}}</p>-->
+  <div id="buttonContainer" *ngIf="currentLevel > -1">
+    <button ion-button block color="appblue" [disabled]="currentLevel != 0" (click)="navigateToImageTestScreen(0)">Level - 1</button>
+    <button ion-button block color="appblue" [disabled]="currentLevel != 1" *ngIf="!isGuestUser" (click)="navigateToImageTestScreen(1)">Level - 2</button>
+    <button ion-button block color="appblue" [disabled]="currentLevel != 2" *ngIf="!isGuestUser"  (click)="navigateToImageTestScreen(2)">Level - 3</button>
+  </div>
+
+
+
+
+  <ion-fab right bottom  (click)="resetTestBtnHandler()">
+    <button ion-fab color="appblue"><ion-icon name="refresh"></ion-icon></button>
+  </ion-fab>
+
+</ion-content>

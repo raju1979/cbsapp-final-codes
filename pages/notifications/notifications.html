@@ -1,0 +1,27 @@
+<ion-header>
+  <ion-navbar color="appblue">
+    <ion-title align="center">Notifications</ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only>
+                <ion-icon name="apps" class="fadeIt"></ion-icon>
+            </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+<ion-content padding class="notficationIonContent">
+  <div id="noNotificationContainer" *ngIf="notifications.length <= 0">
+    There is no notification
+  </div>
+  <div class="notificationsDiv" *ngIf="notifications.length > 0">
+    <ul>
+      <li *ngFor="let item of notifications">
+        <h4 (click)="gotoDownloadPackageView(item)">
+            <ion-icon [name]="getNotificationIcon(item.notification_level)" [color]="getNotificationColor(item.notification_level)"></ion-icon>
+            <article>{{item.notification_text}} <span class="packageTitleContainer" *ngIf="item.package_title != 'NA'">{{item.package_title}}</span></article>
+            <ion-icon ios="ios-arrow-forward" md="md-arrow-forward" *ngIf="item.notification_level == 3 && item.purchasedByCurrentUser"></ion-icon>
+          </h4>
+        <p class="notificationTimeContainer">{{item.notification_time | FormatNotificationDate}}</p>
+      </li>
+    </ul>
+  </div>
+</ion-content>

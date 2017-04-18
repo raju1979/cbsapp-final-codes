@@ -1,0 +1,74 @@
+<!--
+  Generated template for the BookImagesViewer page.
+
+  See http://ionicframework.com/docs/v2/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar color="appblue">
+    <ion-title align-title="center">Book Content</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content no-bounce>
+
+  <div id="mainContainer">
+
+    <!--<div id="imagesOuterContainer">
+      <div class="imagesContainer" *ngFor="let image of this.bookImagesArray, let i = index">
+        <img [src]="getImageUrl(image)" (load)="imgLoaded(image)" alt="" class="bookposterImg" (click)="showImageContainer(image)"
+        />
+      </div>
+    </div>
+  </div>
+
+    <div id="imagesZoomContainer" *ngIf="showZoomImages">
+      <ion-scroll scrollX="true" scrollY="true" zoom=true>
+        <img class="zoomedImage" [src]="getZoomedImagePath()" />
+      </ion-scroll>
+      <div id="closeBtnContainer" color="appblue">
+        <button ion-button clear full (click)="closeImageZoomContainer()" color='light'>Close</button>
+      </div>
+    </div>-->
+
+    <div id="textContainer">
+      Page {{currentImageIndex+1}} of {{bookImagesArray.length}}
+    </div>
+    <div id="imageSliderOuterContainer">
+      <!--<img [src]="getLoadingImgSrc()" alt="" class='loadingImg' *ngIf="!imageFullyLoaded"/>-->
+      <div id="imageContainer" [ngStyle]="divBackgroundStyle()"  no-bounce>
+            <div id="zoomedImageContainer" class="zoomedImage" *ngIf="shouldZoomImage">
+              <img [className]="getZoomedImage()" [src]="getCurrentImageUrl()" (load)="imgLoaded()" alt="" class="sliderImg"/>
+            </div>          
+      </div>
+      <div id="controlsContainer">
+        <div class="buttonControlsContainer">
+          <button ion-button clear block  (click)="decrementCurrentImageIndex()">
+            <ion-icon name="ios-arrow-dropleft" class="largeIcon"></ion-icon>
+          </button>
+        </div>
+        <div class="buttonControlsContainer">
+          <button ion-button clear block (click)="zoomImage(true)" [disabled]="shouldZoomImage">
+            <ion-icon name="ios-add-circle-outline" class="largeIcon" ></ion-icon>
+          </button>
+        </div>
+        <div class="buttonControlsContainer">
+          <button ion-button clear block (click)="zoomImage(false)" [disabled]="!shouldZoomImage">
+            <ion-icon name="ios-remove-circle-outline" class="largeIcon"></ion-icon>
+          </button>
+        </div>
+        <div class="buttonControlsContainer">
+          <button ion-button clear block (click)="incrementCurrentImageIndex()">
+            <ion-icon name="ios-arrow-dropright" class="largeIcon"></ion-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+
+</ion-content>

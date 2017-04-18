@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Ionic App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+
+    <link rel="icon" type="image/x-icon" href="assets/icon/favicon.ico">
+    <link rel="manifest" href="manifest.json">
+    <link href="assets/css/fonts.css" rel="stylesheet" />
+    <meta name="theme-color" content="#4e8ef7">
+
+    
+
+    <!-- un-comment this code to enable service worker
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js')
+        .then(() => console.log('service worker installed'))
+        .catch(err => console.log('Error', err));
+    }
+  </script>-->
+
+    <link href="build/main.css" rel="stylesheet">
+    <style>
+        #splash.fade-out {
+            transition: opacity ease-in-out .70s;
+            opacity: 0;
+        }
+        
+        #splash {
+            z-index: 1;
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background-color: #670000;
+            font-family: "Arsenal", sans-serif !important;
+            margin: 0 auto;
+            text-align: center;
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-align: center;
+            -webkit-align-items: center;
+            -ms-flex-align: center;
+            align-items: center;
+            -webkit-box-pack: center;
+            -webkit-justify-content: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+        }
+        
+        body {
+            font-family: "Arsenal", sans-serif !important;
+        }
+        
+        .cbsLogo { 
+            width: 60%;
+            -webkit-animation: toggleOpacity 2s linear infinite;
+        }
+        
+        @-webkit-keyframes toggleOpacity {
+            0% {
+                opacity: 1;
+            }
+            50% {
+                opacity: .5;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="splash">
+        <img src="assets/img/logo.png" alt="" class="cbsLogo"/>
+    </div>
+    <!-- Ionic's root component and where the app will load -->
+    <ion-app></ion-app>
+
+    <!-- cordova.js required for cordova apps -->
+    <script src="cordova.js"></script>
+
+    <script src="assets/js/localstoragedb.js"></script>
+    <script src="assets/js/moment.min.js"></script>
+    <script src="assets/js/lodash.min.js"></script>
+
+    <!-- The polyfills js is generated during the build process -->
+    <script src="build/polyfills.js"></script>
+
+    <!-- The bundle js is generated during the build process -->
+    <script src="build/main.js"></script> 
+</body>
+
+</html>

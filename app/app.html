@@ -1,0 +1,86 @@
+<!--this is for left side menu-->
+<ion-menu id="menu1" side="left" [content]="mycontent">
+  <ion-content class="menu1Outer">
+    <section class="userpic">
+      <img class="userpicimg" [src]="getProfileImgSrc()" alt="a" />
+      <div class="userNameText">
+        {{userData?.user_name || userData?.name}}
+      </div>
+    </section>
+    <section >
+      <ion-list no-lines>
+        <div class="leftSideListItem">
+          <div class="innerGenereSideListItem">
+            <button class="listButtonWhite" ion-button clear block (click)="navigateToDashboard()">
+              Dashboard
+            </button>          
+          </div>          
+        </div>
+        <div class="leftSideListItem">
+          <div class="innerGenereSideListItem">
+            <button class="listButtonWhite" ion-button clear block (click)="navigateToMyshelf()">
+              My Shelf
+            </button>          
+          </div>          
+        </div>
+        <div class="leftSideListItem">
+          <div class="innerGenereSideListItem">
+            <button class="listButtonWhite" ion-button clear block (click)="navigateToNotifications()">
+              Notifications
+            </button>          
+          </div>          
+        </div>
+        <div class="leftSideListItem" *ngIf="showAddPassCodePage">
+          <div class="innerGenereSideListItem">
+            <button class="listButtonWhite" ion-button clear block (click)="navigateToAddPasscode()">
+              Add Passcode
+            </button>          
+          </div>          
+        </div>
+        <div class="leftSideListItem">
+          <div class="innerGenereSideListItem">
+            <button class="listButtonWhite" ion-button clear block (click)="navigateToFeedback()">
+              Feedback
+            </button>          
+          </div>          
+        </div> 
+        <div class="leftSideListItem">
+          <div class="innerGenereSideListItem">
+            <button class="listButtonWhite" ion-button clear block (click)="navigateToPrivacy()">
+              Privacy Policy
+            </button>          
+          </div>          
+        </div>
+        <div class="leftSideListItem">
+          <div class="innerGenereSideListItem">
+            <button class="listButtonWhite" ion-button clear block (click)="logoutUser()">
+              Logout
+            </button>          
+          </div>          
+        </div> 
+      </ion-list>
+    </section>
+  </ion-content>
+
+</ion-menu>
+
+<!--this is for right side menu-->
+<ion-menu id="menu2" side="right" [content]="mycontent">
+  <ion-header>
+    <ion-toolbar color="appblue">
+      <ion-title>Categories List</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content  class="menu2Outer">
+    <section >
+      <ion-list no-lines>
+        <div class="genereSideListItem" *ngFor="let item of genereList; let i = index" clear>
+          <button  class="listButtonWhite" ion-button clear block (click)="getGenereDataAndNavigate(i)">
+            {{item.name}}
+          </button>          
+        </div> 
+      </ion-list>
+    </section>    
+  </ion-content>
+</ion-menu>
+<ion-nav #mycontent [root]="rootPage" swipeBackEnabled="false"></ion-nav>

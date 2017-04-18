@@ -1,0 +1,88 @@
+<ion-header>
+  <ion-navbar color="appblue" align-title="center">
+    <ion-title align="center">Feedback</ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only>
+                <ion-icon name=""></ion-icon>
+            </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <div id="noPackageFoundContainer" *ngIf="packagesHttpRequestCompleted && noResultFound">
+    <ion-card>
+      <ion-card-header>
+        No Package
+      </ion-card-header>
+      <ion-card-content>
+        <span color="warning">We are unable to find any package for you</span>
+      </ion-card-content>
+    </ion-card>
+  </div>
+  <div id="feebackContainer" *ngIf="userPackages?.length > 0">
+    <div class="selectBook">
+      <ion-list>
+        <ion-item>
+          <ion-label>Select a Book</ion-label>
+          <ion-select [(ngModel)]="bookname" cancelText="Cancel" okText="Ok" multiple=false (ionChange)="bookSelected($event, bookname)">
+            <!--<ion-option value="Cyber Science">Cyber Science</ion-option>
+            <ion-option value="Objective C">Objective C</ion-option>
+            <ion-option value="Medicine">Medicine</ion-option>
+            <ion-option value="Programming">Programming</ion-option>
+            <ion-option value="Fashion">Fashion</ion-option>-->
+            <ion-option *ngFor="let package of userPackages, let i = index" value="{{package?.package_id}}">{{package?.original_title}}</ion-option>
+          </ion-select>
+        </ion-item>
+      </ion-list>
+    </div>
+    <div class="feedbackSection">
+      <div class="feedbackscale">
+        <p><span class="circleMarker">1</span><span>Below Average</span></p>
+        <p><span class="circleMarker">2</span><span>Average</span></p>
+        <p><span class="circleMarker">3</span><span>Superb</span></p>
+      </div>
+      <div class="feedbackQue">
+        <ion-list>
+          <p>Coverage of practice questions </p>
+          <ion-item>
+            <ion-range min="1" max="3" step="1" snaps="true" pin="true" color="appblue" [(ngModel)]="feedBackValue1">
+              <ion-label range-left>1</ion-label>
+              <ion-label range-right>3</ion-label>
+            </ion-range>
+          </ion-item>
+          <p>Live Lecture </p>
+          <ion-item>
+            <ion-range min="1" max="3" step="1" snaps="true" pin="true" color="appblue" [(ngModel)]="feedBackValue2">
+              <ion-label range-left>1</ion-label>
+              <ion-label range-right>3</ion-label>
+            </ion-range>
+          </ion-item>
+          <p>Approach of Book(Theory &amp; PBQ's)</p>
+          <ion-item>
+            <ion-range min="1" max="3" step="1" snaps="true" pin="true" color="appblue" [(ngModel)]="feedBackValue3">
+              <ion-label range-left>1</ion-label>
+              <ion-label range-right>3</ion-label>
+            </ion-range>
+          </ion-item>
+          <ion-item>
+            <ion-label>Value For Money <span class="toggleText">{{feedBackValue4 ? 'Yes' : 'No'}}</span></ion-label>
+            <ion-toggle [(ngModel)]="feedBackValue4" color="appblue"></ion-toggle>
+          </ion-item>
+          <ion-item>
+            <ion-label>Recommend this book <span class="toggleText">{{feedBackValue5 ? 'Yes' : 'No'}}</span></ion-label>
+            <ion-toggle [(ngModel)]="feedBackValue5" color="appblue"></ion-toggle>
+          </ion-item>
+          <p>Any other feedback you like to share? </p>
+          <ion-item>
+            <ion-textarea [(ngModel)]="feedbackSuggestion"></ion-textarea>
+          </ion-item>
+          <ion-item>
+            <button ion-button block large color="appblue" (click)=showFormData()>Submit</button>
+          </ion-item>
+        </ion-list>
+      </div>
+    </div>
+  </div>
+  <!--end feedback container-->
+</ion-content>

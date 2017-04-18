@@ -1,0 +1,100 @@
+page-add-passcode {
+    .addPasscodePage
+    {
+        font-family: "Arsenal", sans-serif !important;
+    }
+    .addPasscodeInput
+    {
+        float: left;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 1em 0;
+        border: solid 1px #ebebeb;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); 
+        background-color: #fff;
+    } 
+    .addPasscodeInput input{
+        flex: 1;
+        padding: 0.8em;
+        border: none;
+        font-size: 1.1em;
+        outline: none;
+    }
+    span.iconContainer{
+        width: 60px;
+        text-align: center;
+    }
+    .addPasscodeLabel
+    {
+        float: left;
+        width: 100%; 
+    }
+    .addPasscodeLabel p
+    {
+        padding: 5px 0;
+        color:#c00;
+        margin: 0;
+    }
+
+    .addPasscodeBtn
+    {
+        float: left;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 1em 0;
+        border: solid 1px #670000;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); 
+        background-color: #670000;
+    } 
+    .addPasscodeBtn button{
+        flex: 1;
+        padding: 0.8em;
+        border: none;
+        font-size: 1.1em;
+        background: none;
+        color:#fff;
+        font-size: 1.2em;
+        text-transform: uppercase;
+        font-weight: bold;
+        letter-spacing: 1px;
+        outline: none;
+    }
+    .addPasscodeLabel2
+    {
+        float: left;
+        width: 100%; 
+        text-align: center;
+    }
+    .addPasscodeLabel2 p
+    {
+        padding: 5px 0;
+        color:#0c0;
+        margin: 0;
+        font-size: 1.4em;
+    }
+    .red
+    {
+        color: red;
+    }
+    #redText
+    {
+        font-weight: bold;
+    }
+    .ultext
+    {
+        font-size: 1.4em;
+        padding-left: 15px;
+    }
+    .ultext li
+    {
+        padding-bottom: 5px;
+    }
+    .uniqueId{
+        color: color($colors, warning);
+        font-size: .8em;
+    }
+}

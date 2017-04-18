@@ -1,0 +1,110 @@
+<ion-header>
+
+    <ion-navbar color="appblue">
+        <ion-title align="center">Course View</ion-title>
+        <ion-buttons end>
+            <button ion-button icon-only>
+                <ion-icon name=""></ion-icon>
+            </button>
+        </ion-buttons>
+    </ion-navbar>
+
+</ion-header>
+
+
+<ion-content>
+    <!--<div id="downloadPackageContainer" *ngIf="!packageDirectoryFoundInDisc">
+        <p><button ion-button color="secondary" (click)="gotoPackageDownloadPage(passedPackage)">Download Package</button></p>
+    </div>-->
+
+    <div id="packageContainer">
+        <div class="packageInfo">
+            <div class="packageInfoImg">
+                <img [src]="getImageUrl(tocJsonData?.id,tocJsonData?.posterPath)" alt="" class="bookposterImg" />
+            </div>
+            <div class="packageInfoText">
+                <h3>{{tocJsonData?.title}}</h3>
+
+            </div>
+        </div>
+        <div class="chapterList">
+            <h3>Course</h3>
+            <!--<div class="packageList">
+                <h4>Sample Pages</h4>
+                <div>
+                    <p *ngFor="let pdfUrl1 of tocJsonData?.mainBookPdf">
+                        
+                        <a [attr.href]="getMainPdfHref(pdfUrl1)">{{pdfUrl1.name}}</a>
+                    </p>
+                </div>
+            </div>-->
+            <div class="packageList">
+                <h4>Sample Pages</h4>
+                <div>
+                    <p (click)="showMainBookImages()">
+                        View Book Content
+                    </p>
+                </div>
+            </div>
+            <div class="packageList">
+                <h4 (click)="toggleLearningContainerDisplay()" *ngIf="tocJsonData?.youtubeUrls.length > 0">
+                    Live Lectures
+                    <ion-icon [name]="toggleLearningCircleIcon()" color="warning" class="rightSideArrow"></ion-icon>
+                </h4>
+                <div id="learningTutorialOuterContainer" *ngIf="shouldShowLearningContainer">
+                    <div>
+                        <p *ngFor="let url of tocJsonData?.guestyoutubeUrls let i=index" (click)="openVideo(url)">
+                            Open Video {{i+1}}
+                            <ion-icon name="play" color="danger"></ion-icon>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="packageList" *ngIf="isGuestUser == false">
+                <h4>Additional Reading</h4>
+                <div>
+                    <p (click)="showAdditionalBookImages()">
+                        View Book Content
+                    </p>
+                </div>
+            </div>
+
+            <div class="packageList">
+                <h4 (click)="toggleTestContainerDisplay()">
+                    My Exams
+                    <ion-icon [name]="toggleTestCircleIcon()" color="warning" class="rightSideArrow"></ion-icon>
+                </h4>
+                <div id="testOuterContainer" *ngIf="shouldShowTestContainer">
+                    <div>
+                        <p (click)="navigatToQuestionView()">
+                            <a>Review Test Questions</a>
+                            <ion-icon name="arrow-forward" color="primary" class="rightSideArrow"></ion-icon>
+                        </p>
+                    </div>
+                    <div>
+                        <p (click)="navigatToImageQuestionView()">
+                            <a>Image Based Questions</a>
+                            <ion-icon name="arrow-forward" color="primary" class="rightSideArrow"></ion-icon>
+                        </p>
+                    </div>
+                    <div>
+                        <p (click)="navigatToGrandLevelSelection()">
+                            <a>Subject Grand Test</a>
+                            <ion-icon name="arrow-forward" color="primary" class="rightSideArrow"></ion-icon>
+                        </p>
+                    </div>
+                    <div>
+                        <p (click) = "navigatToMegaLevelSelection()">
+                            <a>Mega Grand Test</a>
+                            <ion-icon name="arrow-forward" color="primary" class="rightSideArrow"></ion-icon>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end div#packageContainer-->
+
+
+</ion-content>

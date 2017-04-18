@@ -1,0 +1,115 @@
+page-downloaded-package-view {
+    .packageInfo {
+        width: 100%;
+        float: left;
+        background-color: #545454;
+        padding: 1em 0em 0.8em 2em;
+        font-family: "Arsenal", sans-serif !important;
+    }
+    .packageInfoImg {
+        width: 40%;
+        float: left;
+        text-align: right;
+    }
+    .packageInfoImg img {
+        width: 140px;
+        height: 195px;
+        box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+    }
+    .packageInfoText {
+        width: 60%;
+        float: left;
+        position: relative;
+        min-height: 195px;
+        padding-left: 0.8em;
+    }
+    .packageInfoText h3 {
+        margin: 0;
+        margin-bottom: 10px;
+        color: #fff;
+    }
+    .packageInfoText p {
+        margin: 0;
+        margin-bottom: 10px;
+        color: #fff;
+    }
+    .roundButtonNew2 {
+        padding: 8px 12px;
+        background-color: #265a96;
+        border: solid 1px #8ebae9;
+        text-transform: uppercase;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #fff;
+        margin-right: 10px;
+        border-radius: 6px;
+    }
+    .chapterList {
+        width: 100%;
+        float: left;
+        font-family: "Arsenal", sans-serif !important;
+    }
+    .chapterList h3 {
+        background-color: #fff;
+        text-align: center;
+        font-size: 1.4em;
+    }
+    .packageList {
+        width: 100%;
+        float: left;
+    }
+    .packageList h4 {
+        background-color: #d4d4d4 !important;
+        border-bottom: solid 1px #888;
+        padding: 0.8em;
+        margin: 0;
+    }
+    .packageList p {
+        border-bottom: solid 1px #888;
+        padding: 0.8em;
+        margin: 0;
+        color: #545454;
+        font-size: 1.2em;
+//        display: none;
+    }
+    .packageList p a {
+        color: #545454;
+        text-decoration: none;
+    }
+    .packageList p ion-icon
+    {
+        float: right !important;
+    }
+    .packageList ul {
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+//        display: none;
+    }
+    .packageList ul li {
+        border-bottom: solid 1px #888;
+        padding: 0.8em;
+        margin: 0;
+        font-size: 1.2em;
+    }
+    .packageList ul li a {
+        color: #545454;
+        text-decoration: none;
+    }
+    .checkbox-ios .checkbox-icon {
+        background-color: #222;
+        border: solid 1px #222;
+    }
+    .item-ios.item-block .item-inner {
+        border-bottom: none;
+    }
+
+    .rightSideArrow{
+        float: right !important;
+    }
+
+    #downloadPackageContainer{
+        width: 100%;
+        height: 100%;
+    }
+}

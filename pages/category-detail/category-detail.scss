@@ -1,0 +1,143 @@
+page-category-detail {
+
+    .booklist
+    {
+        width: 100%;
+        float: left;
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        background-color: #f1f1f1;
+        font-family: "Arsenal", sans-serif !important;
+    }
+    .booklist li
+    {
+        width: 31.3333%;
+        float: left;
+        text-align: center;
+        padding: 0.8em; 
+        margin: 1% 1%;
+        border: solid 1px #ffffff;
+        background-color: #ffffff;
+        box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+    }
+    .booklist li img
+    {
+        width:auto;
+        height: auto;
+        margin: auto;
+    }
+    .booklist li p
+    {
+        width: 100%;
+        float: left; 
+        margin: 10px 0; 
+        font-size: 3.5vw;
+        color: #670000; 
+        min-height: 20px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .booklist button{
+        font-weight: bold !important;
+    }
+
+    .searchContainer {
+        width: 100%;
+        height: 50px;
+        display: flex;
+        background: #fff;
+        box-sizing: border-box;
+        box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+        margin: 10px 0;   
+        font-family: "Arsenal", sans-serif !important;
+    }
+//    .marginBottom {
+//        margin-bottom: 25px !important;
+//    }
+    .searchArea {
+        flex: 1;
+    }
+    .trashButtonArea {
+        width: 50px;
+        margin-right: 10px;
+        // background: #387EF5;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+    .searchButtonArea {
+        width: 50px;
+        // background: #387EF5;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+    }
+    .searchcInputField {
+        width: 100%;
+        height: 100%;
+        padding: 10px;
+        font-size: 2rem;
+    }
+    .bookSummaryContainer {
+        width: 100%;
+        min-height: 250px;
+        background-color: #fff;
+        margin-bottom: 10px;
+        box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+        font-family: "Arsenal", sans-serif !important;
+    }
+    .packageDescriptionContainer {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        padding-left: 5px;
+    }
+    .packageMiniDescriptionArea {
+        width: 100%;
+        flex: 1;
+    }
+    .viewPackageDetailButtonArea {
+        height: 50px;
+        width: 100%;
+        text-align: right;
+        padding-right: 10px;
+    }
+    .contentBgColor {
+        background-color: #cfcfcf;
+    }
+
+    #noPackageForThisId{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        font-size: 5vw;
+    }
+
+    @media  screen and (min-device-width : 320px) and (max-device-width : 360px) and (orientation : portrait) {
+         .booklist li img
+         {
+             height: 97px;
+         }
+    }
+    @media  screen and (min-device-width : 360px) and (max-device-width : 420px) and (orientation : portrait) {
+         .booklist li img
+         {
+             height: 120px;
+         }
+    }
+    @media  screen and (min-device-width : 420px) and (orientation : portrait) {
+         .booklist li img
+         {
+             height: 233px;
+         }
+    }
+    
+}

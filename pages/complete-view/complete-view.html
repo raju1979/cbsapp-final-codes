@@ -1,0 +1,50 @@
+<ion-header>
+
+  <ion-navbar color="appblue">
+    <ion-title align="center">{{passedPackage?.title}}</ion-title>
+  </ion-navbar>
+  <ion-toolbar color="light">
+        Select Chapters for Review Test
+    </ion-toolbar>
+</ion-header>
+
+
+<ion-content padding-top>
+    <!--<div class="completeBookInfo">
+        <div class="completeBookInfoImg">
+            <img src="../../assets/img/loginbg.jpg" alt=""/>
+        </div>
+        <div class="completeBookInfoText">
+            <h3>Medicine - (2016)</h3>
+            <p>By Deepak Marwah (Author)</p>
+            <ul>
+                <li>
+                    <button class="roundButtonNew2">Review</button>
+                </li>
+                <li>
+                    <button class="roundButtonNew2" (click)="gotoQuestionsView(package?.id)">Test Mode</button>
+                </li>
+            </ul>
+        </div>
+    </div>-->
+    <div class="chapterList">
+        <!--<h3>Contents :: {{passedPackage?.title}}</h3>-->
+        <!--<div class="loadingSpinnerContainer" *ngIf="questionsJson?.chapters.length < 1">
+          <ion-spinner></ion-spinner>
+          Please Wait...
+        </div>-->
+        <ion-item class="itemNewClass" *ngFor="let chapter of questionsJson?.chapters, let i = index" (click)="showChapterAssessment(i)">
+           <ion-label>Chapter {{i+1}} - {{chapter.chapterTitle}}</ion-label>
+           <!--<ion-icon name="star" item-right color="danger" *ngIf="activeChapterIndex == i"></ion-icon>      -->
+           <ion-checkbox color="dark" (ionChange)="questionSetChange($event, i)"></ion-checkbox>
+        </ion-item>
+    </div> 
+
+</ion-content>
+
+<ion-footer align="center" color="appblue">    
+    <ion-toolbar color="appblue">
+        <!--<button ion-button outline color="light">CONTINUE EXISTING</button>-->
+        <button ion-button clear block  color="light" (click)="createNewTest()">START NEW TEST</button>
+    </ion-toolbar>
+</ion-footer>

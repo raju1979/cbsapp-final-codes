@@ -1,0 +1,153 @@
+page-package-view {
+
+    .packagePageContainer{
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        // background-color: #f8f8f8;
+        font-family: "Arsenal", sans-serif !important;
+    }
+
+    #packageInfoArea{
+        width: 100%; 
+        border-bottom: 2px solid $grey1; 
+        padding: 2em 1em;
+    }
+    .packagePosterArea
+    {
+        width: 35%;
+        float: left;
+    }
+    .packagePosterArea img
+    {
+        width: 90%;
+       border: solid 1px #fcfcfc;
+       box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+    }
+    .packageTitleAndWriterArea
+    {
+        width: 65%;
+        float: left;
+    }
+    .packageTitleAndWriterArea div{
+        width: 100%;
+        float: left;
+        display: flex;
+        padding-bottom: 1em;
+        padding-left: 1em;
+    }
+    .packageTitleAndWriterArea div h5{
+        margin: 0;
+        padding: 0;
+        padding-right: 10px;
+        font-size: 1.7rem;
+    }
+    .packageTitleAndWriterArea div p{
+        margin: 0;
+        padding: 0;
+        font-size: 1.7rem;
+    }
+    .packageTitleAndWriterArea div p span{
+        width: 100%;
+        float: left;
+    }
+    .packageActionBtns button
+    {
+        font-weight: bold;
+        font-size: 1.4rem;
+    }
+    .descriptionArea
+    {
+        font-size: 1.4rem;
+    }
+    .descriptionArea ul
+    {
+        list-style-image: url(../assets/img/bullet.png);
+        font-size: 1.5rem;
+        padding: 10px 20px;
+    }
+    .descriptionArea ul li
+    {
+        padding: 6px;
+        // box-shadow: 0 1px 2px rgba(0,0,0,0.4);
+        // border-bottom: solid 3px #e80b0b;
+        margin-top: 10px;
+        background-color: #fff;
+    }
+    .descriptionArea ul li ul
+    {
+        list-style-type: circle; 
+        padding-left: 20px;
+    }
+    .descriptionArea ul li ul li
+    {
+        padding: 5px;
+        margin-bottom: 0;
+        box-shadow: 0 0 0 rgba(0,0,0,0.0);
+        border-bottom: none;
+    }
+    #segmentOuterContainer{
+        flex:1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .segmentArea{
+        width: 100%;
+        height: 50px;
+        text-align: center;
+        overflow: auto;
+    }
+
+    .segmentInnerArea{
+        width: 50%;
+        margin:0 auto;
+    }
+
+    .segmentContentArea{
+        width: 100%;
+        flex: 1;
+        overflow: hidden;
+        overflow-y: auto;
+        padding: 0 15px 15px 15px; 
+    }
+
+    .reviewList{
+        margin:10px 0;
+        border-bottom:2px solid blue;
+    }
+
+    .reviewAuthorText{
+        font-size: 2rem;
+        color:#235793;
+        margin-bottom:10px;
+    }
+
+    .reviewText{
+        margin-bottom:10px;
+    }
+    .authorList
+    {
+       width: 100%;
+       display: flex;
+       flex-direction: column;
+       padding-bottom: 1em;
+       margin-bottom: 15px;
+       border-bottom: solid 1px #cfcfcf;
+    }
+    .authorList img
+    {
+       width: 140px;
+       height: 180px;
+       margin: auto;
+       border: solid 1px #454545;
+       box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+       -webkit-transform: scale(0.8);
+    }
+    .authorList div
+    {
+        flex: 1;
+    }
+
+}

@@ -1,0 +1,75 @@
+<ion-header>
+  <ion-navbar color="appblue">
+    <ion-title align="center">{{parsedpackageData?.original_title}}</ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only>
+          <ion-icon name="apps" class="fadeIt"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+
+<ion-content>
+  <div class="packagePageContainer">
+    <div id="packageInfoArea">
+      <div class="packagePosterArea">
+        <img [src]="getImageUrl(parsedpackageData.id,parsedpackageData.poster_path)" alt="" class="bookposterImg" />
+      </div>
+      <div class="packageTitleAndWriterArea">
+        <div>
+          <h5 class="titleText">Name:</h5> 
+          <p><span>{{parsedpackageData?.original_title}}</span></p>
+        </div>
+        <div>
+          <h5 class="titleText">Authors:</h5>
+         <p> <span *ngFor="let author of packageDescription?.authors">{{author?.author_name}}</span></p>
+         </div>
+        <div>
+          <h5 class="titleText">Edition:</h5> 
+          <p><span>2017</span></p>
+        </div>
+        <div class="packageActionBtns">
+          <button ion-button small color="appblue" *ngIf="hideBuyBtn && isGuestUser">Buy</button>
+          <button ion-button small color="appblue" *ngIf="isGuestUser" (click)="gotoDownloadedPackageViewAsGuest(parsedpackageData)">Sample</button>
+          <button ion-button small color="apblue" *ngIf="!isGuestUser" (click)="gotoDownloadedPackageViewAsPrivilegedUser(parsedpackageData)">View</button>
+        </div>
+      </div> 
+    </div>
+
+
+    <div id="segmentOuterContainer">
+      <div class="segmentArea">
+        <div class="segmentInnerArea">
+          <ion-segment [(ngModel)]="relationship" color="grey2">
+            <ion-segment-button value="details" (ionSelect)="selectedFriends()">
+              Description
+            </ion-segment-button>
+            <ion-segment-button value="reviews" (ionSelect)="selectedEnemies()">
+              Authors
+            </ion-segment-button>
+          </ion-segment>
+        </div>
+      </div>
+      <div class="segmentContentArea">
+        <div [ngSwitch]="relationship">
+          <div *ngSwitchCase="'details'">
+            <h4>Product Description</h4>
+            <div class="descriptionArea" [innerHtml]="packageDescription?.description"></div>
+          </div>
+
+          <div *ngSwitchCase="'reviews'">
+            <div *ngFor="let authors of packageDescription?.authors" class="authorList">
+              <img [src]="getAuthorImageUrl(packageDescription?.id, authors?.author_img)" alt="" />
+              <div>
+                <h4>{{authors?.author_name}}</h4>
+                <p [innerHtml]="authors?.about_author"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</ion-content>

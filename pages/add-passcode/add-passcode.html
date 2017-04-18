@@ -1,0 +1,66 @@
+<ion-header>
+
+  <ion-navbar color="appblue">
+    <ion-title align="center">Add Passcode</ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only>
+                <ion-icon name=""></ion-icon>
+            </button>
+    </ion-buttons>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding class="addPasscodePage">
+  <h3>Enter the Package Id &amp; Unique Key what you got free with book purchase*</h3>
+
+  <div class="addPasscodeInput">
+    <input type="text" placeholder="Enter Package Id" [(ngModel)]="passCodeText" />
+    <!--<span class="iconContainer">
+        <ion-spinner color="appblue" *ngIf="passCodeText"></ion-spinner>
+    </span>-->
+  </div>
+  <div class="addPasscodeLabel">
+    <p>{{passcodeError}}</p>
+  </div>
+  <div class="addPasscodeInput">
+    <input type="text" placeholder="Enter Unique Id" [(ngModel)]="uniqueKeyText"  />
+    <!--<span class="iconContainer">
+        <ion-spinner color="appblue" *ngIf="uniqueKeyText"></ion-spinner>
+    </span>-->
+  </div>
+  <div class="addPasscodeLabel">
+    <p>{{uniqueKeyError}}</p>
+  </div>
+
+  
+  <div class="addPasscodeBtn">
+    <span class="iconContainer"></span>
+    <button (click)="onSubmitting()">Submit</button>
+    <!--<span class="iconContainer">
+        <ion-spinner color="light" *ngIf="submitting"></ion-spinner>
+    </span>-->
+  </div> 
+
+  <div class="addPasscodeLabel2">
+    <p>{{btnStatus}}</p>
+  </div>
+
+
+  <p [innerHTML]="htmlSnippet"></p>
+
+  <div id="existingPasscodesContainer">
+    <ion-card>
+      <ion-card-header>
+        Existing Passcodes
+      </ion-card-header>
+      <ion-list>
+        <ion-item *ngFor="let package of existingPackagesList">
+          {{package.original_title}} <span class="uniqueId">{{package.unique_id}}</span>
+        </ion-item>
+      </ion-list>
+    </ion-card>
+  </div>
+
+</ion-content>

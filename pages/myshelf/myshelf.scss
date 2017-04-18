@@ -1,0 +1,82 @@
+page-myshelf {
+    #noPackageText{
+        width: 100%;
+        height: auto; 
+        float: left;
+        font-size: 1em;
+    }
+    #noPackageText p{
+        color: #989898;
+        padding: 8px 0;
+    }
+    .myShelfContainer {
+        width: 100%; 
+        background-color: #fff;
+        float: left;
+        font-family: "Arsenal", sans-serif !important;
+    }
+    .myShelfBook
+    { 
+        width: 100%;
+        padding: 1em 1.5em;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px; 
+        box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    }
+    .bookCover
+    {
+        width: 25%;
+    }
+    .bookTitle
+    {
+        flex: 1;
+    }
+    .bookActions
+    {
+        width: 20%;
+    }
+    .titleText{
+        padding-left: 1em;
+        text-transform: capitalize;
+    }
+    .packageDescriptionContainer {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        padding-left: 5px;
+    }
+    .packageMiniDescriptionArea {
+        width: 100%;
+        flex: 1;
+    }
+    .viewPackageDetailButtonArea {
+        height: 50px;
+        width: 100%;
+        text-align: right;
+        padding-right: 10px;
+    }
+    p.titleText {
+        font-weight: bold;
+        font-size: 2rem;
+        color: #670000;
+    }
+    .contentBgColor {
+        background-color: #cfcfcf;
+    }
+
+    /**
+    start media queries
+
+    */
+
+    @media  screen and (min-device-width : 375px) and (max-device-width : 667px) and (orientation : portrait) {
+        .bookSummaryContainer{
+            min-height: 150px !important;
+        }
+    
+    }
+    
+}

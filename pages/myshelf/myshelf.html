@@ -1,0 +1,35 @@
+<ion-header>
+  <ion-navbar color="appblue">
+    <ion-title align="center">My Shelf</ion-title>
+    <ion-buttons end *ngIf="userPackages.length > 0">
+      <button ion-button icon-only class="fadeIt">
+        <ion-icon name="cloud-download" color="secondary"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+<ion-content>
+  <div class="myShelfContainer">
+    <div id="noPackageText" *ngIf="userPackagesList.length == 0">
+      <ion-card>
+        <ion-card-header>
+          No Package
+        </ion-card-header>
+        <ion-card-content>
+          <span color="warning">We are unable to find any package for you</span>
+        </ion-card-content>
+      </ion-card>
+    </div>
+    <div class="myShelfBook" *ngFor="let package of userPackagesList">
+      <div class="bookCover">
+        <img [src]="getImageUrl(package.id,package.poster_path)" alt="" />
+      </div>
+      <div class="bookTitle">
+        <p class="titleText">{{package?.details.original_title}}</p>
+      </div>
+      <div class="bookActions">
+        <button ion-button color="appblue" class="roundButton" (click)="gotoPackageView(package)">View</button>
+      </div>
+    </div>
+  </div>
+</ion-content>

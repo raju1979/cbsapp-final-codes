@@ -1,0 +1,94 @@
+<ion-header>
+  <ion-toolbar color="appblue">
+    <ion-buttons start>
+      <button ion-button icon-only color="royal" (click)="enableMenu1()">
+        <ion-icon name="menu"></ion-icon>
+      </button>
+    </ion-buttons>
+    <ion-title align="center">CBS EXAM BOOKS</ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only color="" (click)="enableMenu2()">
+        <!--<ion-icon name="apps"></ion-icon>-->
+      </button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content>
+
+  <div class="homeScreenBox">
+    <div class="selectCatagoryList">
+      <div class="homeScreenHead">
+        <h4>Welcome to</h4>
+        <h3>CBS Exam Books</h3>
+      </div>
+      <div class="selectCatagoryBox">
+        <a (click)="itemSelected(genreArray[0])">PGMEE / Medical MCQs</a>
+      </div>
+      <div class="selectCatagoryBox">
+        <a (click)="itemSelected(genreArray[1])">PGDEE / Dental MCQs</a>
+      </div>
+      <div class="selectCatagoryBox">
+        <a (click)="itemSelected(genreArray[2])">FMGE / MCI Screening</a>
+      </div>
+      <div class="selectCatagoryBox">
+        <a (click)="itemSelected(genreArray[3])">Nursing Competitive Exams / Nursing MCQs</a>
+      </div>
+    </div>
+  </div>
+
+
+  <!--<ion-fab right bottom *ngIf="scrollDistance > 200">
+    <button ion-fab color="primary" (click)="scrollToTop()"><ion-icon name="arrow-dropup"></ion-icon></button>
+  </ion-fab>
+
+  <div class="searchContainer">
+    <div class="searchArea">
+      <input type="text" class="searchcInputField" placeholder="Search a Book" />
+    </div>
+    <div class="searchButtonArea">
+      <button ion-button icon-only block large color="appblue">
+        <ion-icon name="search"></ion-icon>
+      </button>
+    </div>
+  </div>-->
+
+  <!-- <ion-scroll scrollX="true" overflow-scroll="false">
+    <div class="bookImgContainer" (click)="openPackageView()"></div>
+    <div class="bookImgContainer"></div>
+    <div class="bookImgContainer"></div>
+    <div class="bookImgContainer"></div>
+    <div class="bookImgContainer"></div>
+    <div class="bookImgContainer"></div>
+    <div class="bookImgContainer"></div>
+    <div class="bookImgContainer"></div>
+    <div class="bookImgContainer"></div>
+    <div class="bookImgContainer"></div>
+    <div class="bookImgContainer"></div>
+  </ion-scroll> -->
+
+  <!--<ion-card class="fullWidthCard" *ngFor="let item of genreArray">
+    <ion-card-header>
+      <span class="categoryNameText">{{item.name | capitalize}}</span>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-scroll scrollX="true" overflow-scroll="false">
+        <div class="bookImgContainer" (click)="openPackageView(package)" *ngFor="let package of item.packagelist?.results">
+          <img src="http://image.tmdb.org/t/p/w185/{{package.poster_path}}" alt="" class="bookposterImg">
+          <p class="packageTitleText">{{package.title}}</p>
+        </div>
+      </ion-scroll>
+    </ion-card-content>
+    <ion-row>
+      <ion-col>
+        <button ion-button icon-left clear small>
+          <ion-icon name="eye"></ion-icon>
+          <button ion-button (click)="itemSelected(item)" clear [disabled]="!allDataLoaded">View All</button>
+        </button>
+      </ion-col>
+    </ion-row>
+  </ion-card>-->
+
+
+</ion-content>

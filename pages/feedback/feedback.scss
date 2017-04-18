@@ -1,0 +1,124 @@
+page-feedback {
+    .selectBook {
+        background-color: #fcfcfc;
+        float: left;
+        width: 100%;
+        box-shadow: 0 0 1px rgba(0, 0, 0, 0.4);
+        height:60px;
+    }
+    .selectBookItem
+    {
+        height:60px;
+        font-family: "Arsenal", sans-serif !important;
+    }
+    ion-alert
+    {
+        font-family: "Arsenal", sans-serif !important;
+    }
+    .list-md {
+        margin: 0;
+    }
+    .feedbackSection {
+        float: left;
+        width: 100%;
+        font-family: "Arsenal", sans-serif !important;
+    }
+    .feedbackSection h4 {
+        font-weight: 400;
+        font-size: 1em;
+        padding: 0 10px;
+        float: left;
+        width: 100%;
+        color: #909090;
+    }
+    .feedbackSection h4 span {
+        color: #f70;
+        font-style: italic;
+    }
+    .feedbackscale,
+    .feedbackQue {
+        float: left;
+        width: 100%;
+        padding: 0 10px;
+    }
+    .feedbackscale p{
+        // width: 33.33333%;
+        float: left;
+        text-align: left;
+        padding: 0 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    } 
+    .circleMarker
+    {
+        width: 20px;
+        height: 20px;
+        background-color: #670000;
+        text-align: center;
+        line-height: 20px;
+        font-weight: bold;
+        color: #fff;
+        margin-right: 10px;
+        display: inline-block;
+    }
+    .feedbackscale p span{ 
+        text-transform: uppercase; 
+        font-size: 0.75em;
+        letter-spacing: 1px; 
+        font-weight: bold;
+    }
+    .feedbackQue p { 
+        margin: 25px 0;
+        font-size: 1.2em;
+        padding: 0 10px;
+    }
+    .label-md {
+        margin: 0;
+        text-align: left;
+        margin-top: 10px;
+    }
+    .item-md {
+        padding: 0 10px;
+    }
+    .range-md.range-has-pin {
+        padding: 20px 0 20px 0;
+    }
+    // .list-md .item-block .item-inner {
+    //     border-bottom: solid 1px #206fcb;
+    // }
+    .range-md .range-tick
+    {
+        top: 16px;
+        height: 11px;
+        background-color: #f00;
+    }
+    .item-ios{ 
+        padding-left: 0;
+    }
+    .list-ios
+    {
+        margin: 0;
+    }
+    .toggleText
+    { 
+        text-transform: uppercase;
+        font-weight: bold;
+        font-style: italic;
+    }
+    ion-textarea{
+        border: solid 1px #cfcfcf; 
+    }
+    ion-textarea textarea{ 
+        min-height: 100px;
+    }
+    .list-md .item-block .item-inner
+    {
+        border-bottom: none !important;
+        padding-right: 0 !important;
+    }
+    #noPackageFoundContainer{
+        width: 100%;
+        height: 100%;
+    }
+}

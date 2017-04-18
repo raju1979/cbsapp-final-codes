@@ -1,0 +1,32 @@
+<ion-header>
+
+    <ion-navbar color="appblue">
+        <ion-title align="center">Questions Statistics</ion-title>
+        <ion-buttons end>
+            <button ion-button icon-only color="light" (click)="showStats()">
+                <ion-icon name="stats" class="fadeIt"></ion-icon>
+            </button>
+        </ion-buttons>
+    </ion-navbar>
+
+</ion-header>
+
+<ion-content>
+    <div>
+        <ul class="queList">
+            <li *ngFor="let queNum of reviewQuestionObj, let i = index" (click)="closeThisModal(i)">
+                <span>
+                    {{i+1}}
+                </span>
+                <span [ngSwitch]="checkAnswered(i)">
+                    <span *ngSwitchCase="'C'"><ion-icon name="checkmark-circle" color="secondary"></ion-icon></span>
+                    <span *ngSwitchCase="'W'"><ion-icon name="close-circle" color="danger"></ion-icon></span>
+                    <span *ngSwitchCase="'F'"><ion-icon name="help-circle" color="dark"></ion-icon></span>
+                </span>
+            </li>
+        </ul>
+    </div>
+</ion-content>
+<ion-footer>
+    <button ion-button color="appblue" block full large (click)="closeThisModal(-1)">Close</button>
+</ion-footer> 

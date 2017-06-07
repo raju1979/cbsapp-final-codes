@@ -27,12 +27,12 @@
          </div>
         <div>
           <h5 class="titleText">Edition:</h5> 
-          <p><span>2017</span></p>
+          <p><span>{{packageDescription?.edition}}</span></p>
         </div>
         <div class="packageActionBtns">
-          <button ion-button small color="appblue" *ngIf="hideBuyBtn && isGuestUser">Buy</button>
-          <button ion-button small color="appblue" *ngIf="isGuestUser" (click)="gotoDownloadedPackageViewAsGuest(parsedpackageData)">Sample</button>
-          <button ion-button small color="apblue" *ngIf="!isGuestUser" (click)="gotoDownloadedPackageViewAsPrivilegedUser(parsedpackageData)">View</button>
+          <button ion-button color="appblue" *ngIf="hideBuyBtn && isGuestUser" (click)="gotoPurchaseUrl()">Buy</button>
+          <button ion-button color="appblue" *ngIf="isGuestUser" (click)="gotoDownloadedPackageViewAsGuest(parsedpackageData)">Sample</button>
+          <button ion-button color="appblue" *ngIf="!isGuestUser" (click)="gotoDownloadedPackageViewAsPrivilegedUser(parsedpackageData)">View</button>
         </div>
       </div> 
     </div>
@@ -56,6 +56,12 @@
           <div *ngSwitchCase="'details'">
             <h4>Product Description</h4>
             <div class="descriptionArea" [innerHtml]="packageDescription?.description"></div>
+            <div class="reviewArea" *ngIf="packageDescription?.review.length > 0">
+              <p class="boldTextForHeading">Reviews</p>
+              <ul>
+                <li *ngFor="let review of packageDescription?.review">{{review}}</li>
+              </ul>
+            </div>
           </div>
 
           <div *ngSwitchCase="'reviews'">

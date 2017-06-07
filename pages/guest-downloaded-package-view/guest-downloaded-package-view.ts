@@ -91,7 +91,7 @@ export class GuestDownloadedPackageView {
             this.fs = cordova.file.documentsDirectory;
         }
         else if (this.platform.is('android')) {
-            this.fs = cordova.file.externalRootDirectory;
+            this.fs = cordova.file.dataDirectory;
         }
 
 
@@ -128,8 +128,12 @@ export class GuestDownloadedPackageView {
     };//
 
     openVideo(videoUrlText: any): void {
-        
+        if (this.platform.is("mobile") && this._network.type == "none") {//if offline on mobile
+            this.showNoNetworkAlert();
+        }else{
             this.navCtrl.push(VideoPopover, { videoUrl: videoUrlText })
+        }
+            
         
     }
 
@@ -195,7 +199,7 @@ export class GuestDownloadedPackageView {
     
     //check if folder cbsapp/packageId exists
     checkPackageFolder() {
-        //this.fs = cordova.file.externalRootDirectory;
+        //this.fs = cordova.file.dataDirectory;
         this._file.checkDir(this.fs, this.mainDirectoryName + "/" + this.passedPackage.id).
             then(_ => this.packageDirectoryFound())
             .catch(err => console.log(err));
@@ -232,7 +236,7 @@ export class GuestDownloadedPackageView {
     showNoNetworkAlert(): void {
         let alert = this.alertCtrl.create({
             title: 'Not Online!',
-            subTitle: 'we are unable to fetch you online questions. Please connect to the Internet and restart the app!',
+            subTitle: 'We are unable to fetch questions. Please check your internet connection!',
             buttons: ['OK']
         });
         alert.present();
@@ -243,7 +247,7 @@ export class GuestDownloadedPackageView {
         let errorMsg: any = JSON.stringify(err);
         let alert = this.alertCtrl.create({
             title: 'Error!',
-            subTitle: `There is some problem at server. Please check your network connection and Restart the App!<br />${errorMsg}`,
+            subTitle: `There is some problem at server. Please check your network connection!`,
             buttons: ['OK']
         });
         alert.present();
@@ -393,12 +397,22 @@ export class GuestDownloadedPackageView {
 
     showMainBookImages(){
         console.log(this.tocJsonData);
-        this.navCtrl.push(BookImagesViewer,{data:this.tocJsonData,mainReading:true})
+        if (this.platform.is("mobile") && this._network.type == "none") {//if offline on mobile
+            this.showNoNetworkAlert();
+        }else{
+            this.navCtrl.push(BookImagesViewer,{data:this.tocJsonData,mainReading:true});
+        }
+        
     };//
 
     showAdditionalBookImages(){
         console.log(this.tocJsonData);
-        this.navCtrl.push(BookImagesViewer,{data:this.tocJsonData,mainReading:false})
+        if (this.platform.is("mobile") && this._network.type == "none") {//if offline on mobile
+            this.showNoNetworkAlert();
+        }else{
+            this.navCtrl.push(BookImagesViewer,{data:this.tocJsonData,mainReading:false})
+        }
+        
     };//
 
     showToastIfGuestUser(){
@@ -420,7 +434,20 @@ export class GuestDownloadedPackageView {
     }
 
     navigatToMegaLevelSelection():void{
-        this.navCtrl.push(MegaLevelSelection,{id:this.packageIdPasssed,guestUser:this.isGuestUser});
-    }
+        if(this.tocJsonData.megaTestAvailable == "yes"){
+            this.navCtrl.push(MegaLevelSelection,{id:this.packageIdPasssed,guestUser:this.isGuestUser});
+        }else{
+            this.showAlertIfMegaTestUnavilable();
+        }
+        
+    };//
+
+    showAlertIfMegaTestUnavilable() {
+        let alert = this.alertCtrl.create({
+            title: 'Coming Soon!',
+            subTitle: `Mega Grand Test will be available soon.`,
+            buttons: ['OK']
+        });alert.present();
+    };//
 
 }

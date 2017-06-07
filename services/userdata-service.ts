@@ -58,37 +58,38 @@ export class UserdataService {
 
     this.lib = new localStorageDB("cbsapp", localStorage);
 
-    this.baseUrlPackage = "https://s3-us-west-2.amazonaws.com/cbsapp/package_content/";
+    this.baseUrlPackage = "https://s3.ap-south-1.amazonaws.com/cbspublisher/package_content/";
 
-    this.tocJson = {
-      "id": "98581",
-      "mainBookPdf": [
-        {
-          "name": "main.pdf"
-        }
-      ],
-      "youtubeUrls": [
-        "https://www.youtube.com/embed/_xn5ot6JNV4?rel=0&amp;showinfo=0",
-        "https://www.youtube.com/embed/_xn5ot6JNV4?rel=0&amp;showinfo=0",
-        "https://www.youtube.com/embed/_xn5ot6JNV4?rel=0&amp;showinfo=0"
-      ],
-      "posterPath": "no_image.png",
-      "additionalPdfs": [
-        {
-          "id": "4597343487",
-          "name": "sample1.pdf"
-        },
-        {
-          "id": "3478445893",
-          "name": "sample2.pdf"
-        },
-        {
-          "id": "3987205489",
-          "name": "sample3.pdf"
-        }
-      ],
-      "questionsFile": "questions.json"
-    }
+
+    // this.tocJson = {
+    //   "id": "98581",
+    //   "mainBookPdf": [
+    //     {
+    //       "name": "main.pdf"
+    //     }
+    //   ],
+    //   "youtubeUrls": [
+    //     "http://www.youtube.com/embed/_xn5ot6JNV4?rel=0&amp;showinfo=0",
+    //     "http://www.youtube.com/embed/_xn5ot6JNV4?rel=0&amp;showinfo=0",
+    //     "http://www.youtube.com/embed/_xn5ot6JNV4?rel=0&amp;showinfo=0"
+    //   ],
+    //   "posterPath": "no_image.png",
+    //   "additionalPdfs": [
+    //     {
+    //       "id": "4597343487",
+    //       "name": "sample1.pdf"
+    //     },
+    //     {
+    //       "id": "3478445893",
+    //       "name": "sample2.pdf"
+    //     },
+    //     {
+    //       "id": "3987205489",
+    //       "name": "sample3.pdf"
+    //     }
+    //   ],
+    //   "questionsFile": "questions.json"
+    // }
 
   };//end constructor
 
@@ -101,7 +102,7 @@ export class UserdataService {
 
   getGenereList() {
 
-    var genereList = this._http.get("http://52.11.53.90/cbsapp/get_package_list.php").map((res: Response) => res.json());
+    var genereList = this._http.get("https://mycbsexambooks.com/cbsapp/get_package_list.php").map((res: Response) => res.json());
     genereList.subscribe(
       (data) => this.populateGenereListArray(data),
       (err) => console.log(err)
@@ -121,16 +122,16 @@ export class UserdataService {
 
 
   getUserValidated(email: any, pass: any) {
-    let user_email = email || 'dhrajesh1@gmail.com';
-    let user_pass = pass || '123456';
-    var userList = this._http.get(`http://52.11.53.90/cbsapp/login.php?email=${user_email}&pass=${user_pass}`).map((res: Response) => res.json());
+    let user_email = email;
+    let user_pass = pass;
+    var userList = this._http.get(`https://mycbsexambooks.com/cbsapp/login.php?email=${user_email}&pass=${user_pass}`).map((res: Response) => res.json());
     // var userList = this._http.get(`http://localhost/cbsapp/login.php?email=${user_email}&pass=${user_pass}`).map((res:Response) => res.json());
     return userList;
   };//
 
   getAllPackageByUser(id: any) {
     let user_id = id;
-    var allpackageByUser = this._http.get(`http://52.11.53.90/cbsapp/allpackage_by_user.php?user_id=${user_id}`).map((res: Response) => res.json());
+    var allpackageByUser = this._http.get(`https://mycbsexambooks.com/cbsapp/allpackage_by_user.php?user_id=${user_id}`).map((res: Response) => res.json());
     // var allpackageByUser = this._http.get(`http://localhost/cbsapp/allpackage_by_user.php?user_id=${user_id}`).map((res:Response) => res.json());
     return allpackageByUser;
   }
@@ -148,7 +149,7 @@ export class UserdataService {
     }
     return Observable.forkJoin(
       idArray.map(
-        (i: any) => this._http.get('http://52.11.53.90/cbsapp/get_all_packages_by_id.php?genreid=' + i.id + "&offset=" + offset)
+        (i: any) => this._http.get('https://mycbsexambooks.com/cbsapp/get_all_packages_by_id.php?genreid=' + i.id + "&offset=" + offset)
           .map(res => res.json())
       ))
     //var genereList = this._http.get("http://www.notesapp.esy.es/tmdbphp/tmdb_movieby_genre.php?genereid="+id).map((res:Response) => res.json());
@@ -159,7 +160,7 @@ export class UserdataService {
     if (typeof offset === "undefined") {
       offset = 0;
     }
-    return this._http.get('http://52.11.53.90/cbsapp/get_all_packages_by_id.php?genreid=' + id + "&offset=" + offset).timeout(6000)
+    return this._http.get('https://mycbsexambooks.com/cbsapp/get_all_packages_by_id.php?genreid=' + id + "&offset=" + offset).timeout(5000)
       .map(res => res.json())
     //var genereList = this._http.get("http://www.notesapp.esy.es/tmdbphp/tmdb_movieby_genre.php?genereid="+id).map((res:Response) => res.json());
     //return genereList;
@@ -169,13 +170,13 @@ export class UserdataService {
   getInduvidualPackagesPurchasedByUser(packageIdArray: any) {
     return Observable.forkJoin(
       packageIdArray.map(
-        (i: any) => this._http.get('http://52.11.53.90/cbsapp/get_package_by_id.php?packageid=' + i.package_id)
+        (i: any) => this._http.get('https://mycbsexambooks.com/cbsapp/get_package_by_id.php?packageid=' + i.package_id)
           .map(res => res.json())
       ))
   };//
 
    getNotificationList() {
-    var notificationList = this._http.get("http://52.11.53.90/cbsapp/getNotifications.php");
+    var notificationList = this._http.get("https://mycbsexambooks.com/cbsapp/getNotifications.php");
     return notificationList;
   }
 
@@ -189,98 +190,49 @@ export class UserdataService {
     return genereData;
   };//
 
-  getpackageById(id: any) {
-    var movieData = this._http.get("http://notesapp.esy.es/tmdbphp/tmdb_movie_by_id.php?movieid=" + id).map((res: Response) => res.json());
-    //console.log(movieData);
-    return movieData;
-  };//
-
-  getPackageReviewByMovieid(id: any) {
-    var movieData = this._http.get("http://notesapp.esy.es/tmdbphp/tmdb_review_by_movieid.php?movieid=" + id).map((res: Response) => res.json());
-    //console.log(movieData);
-    return movieData;
-  }
-
-  setQuestionDataLocalStorage(data:any){
-    let questionsDataArray:Array<any> = [];
-
-    if (localStorage.getItem("question_data") === null) {
-      //return "no data";
-      questionsDataArray.push(data);
-    }else{
-      questionsDataArray = JSON.parse(localStorage.getItem("question_data"));
-      questionsDataArray.push(data);
-      //return question_data;
-    }
-
-    localStorage.removeItem("question_data");
-    localStorage.setItem("question_data",JSON.stringify(questionsDataArray));
-  };//
-
-  getQuestionLocalStorage(){
-    if (localStorage.getItem("question_data") === null) {
-      return "no data";
-    }else{
-      let question_data = localStorage.getItem("question_data");
-      return question_data;
-    }
-  }
-
-  setUserLoginDataLocalStorage(data:any) {
-    localStorage.setItem("user_master", JSON.stringify(data));
-  }
-
-  getUserLoginDataLocalStorage() {
-    if (localStorage.getItem("user_master") === null) {
-      return "no user";
-    } else {
-      let user_master = localStorage.getItem("user_master");
-      return JSON.parse(user_master);
-    }
-  };//
 
   getPackageTocFromServer(id:string){
-    console.log(`https://s3-us-west-2.amazonaws.com/cbsapp/package_content/${id}/TOC.json`);
-    let packageToc = this._http.get(`https://s3-us-west-2.amazonaws.com/cbsapp/package_content/${id}/TOC.json`).map((res: Response) => res.json());
+    console.log(`${this.baseUrlPackage}${id}/TOC.json`);
+    let packageToc = this._http.get(`${this.baseUrlPackage}${id}/TOC.json`).map((res: Response) => res.json());
     return packageToc;
   }
-  //https://s3-us-west-2.amazonaws.com/cbsapp/package_content/a78o5jax32/TOC.json
+  //http://s3-us-west-2.amazonaws.com/cbsapp/package_content/a78o5jax32/TOC.json
 
   getReviewQuestionsFromServer(id:string){
-    let questions = this._http.get(`https://s3-us-west-2.amazonaws.com/cbsapp/package_content/${id}/questions.json`).map((res: Response) => res.json());
+    let questions = this._http.get(`${this.baseUrlPackage}${id}/questions.json`).map((res: Response) => res.json());
     return questions;
   }
 
   getImageQuestionsFromServer(id:string){
-    let questions = this._http.get(`https://s3-us-west-2.amazonaws.com/cbsapp/package_content/${id}/image_questions.json`);
+    let questions = this._http.get(`${this.baseUrlPackage}${id}/image_questions.json`);
     return questions;
   }
 
   getGrandQuestionsFromServer(id:string,level:number){
     let questions:any;
         console.log(`Passed ID is ${id} and passed level is ${level}`);
-        questions = this._http.get(`https://s3-us-west-2.amazonaws.com/cbsapp/package_content/${id}/grandpackage/Package0000${level+1}.json`);
+        questions = this._http.get(`${this.baseUrlPackage}${id}/grandpackage/Package0000${level+1}.json`);
     
 
     return questions;
-    // let questions = this._http.get(`https://s3-us-west-2.amazonaws.com/cbsapp/package_content/${id}/image_questions.json`);
+    // let questions = this._http.get(`http://s3-us-west-2.amazonaws.com/cbsapp/package_content/${id}/image_questions.json`);
     // return questions;
   }
 
   getMegaQuestionsFromServer(id:string,level:number){
     let questions:any;
         console.log(`Passed ID is ${id} and passed level is ${level}`);
-        questions = this._http.get(`https://s3-us-west-2.amazonaws.com/cbsapp/package_content/${id}/megagrand/Package0000${level+1}.json`);
+        questions = this._http.get(`${this.baseUrlPackage}${id}/megagrand/Package0000${level+1}.json`);
     
 
     return questions;
-    // let questions = this._http.get(`https://s3-us-west-2.amazonaws.com/cbsapp/package_content/${id}/image_questions.json`);
+    // let questions = this._http.get(`http://s3-us-west-2.amazonaws.com/cbsapp/package_content/${id}/image_questions.json`);
     // return questions;
   }
 
 
   getPackageTocFromLocal(id:string,fs:any){
-    let packageToc = this._http.get(`https://s3-us-west-2.amazonaws.com/cbsapp/package_content/${id}/TOC.json`).map((res: Response) => res.json());
+    let packageToc = this._http.get(`${this.baseUrlPackage}${id}/TOC.json`).map((res: Response) => res.json());
     return packageToc;
   }
 
@@ -289,22 +241,42 @@ export class UserdataService {
 
     console.log(params);
 
-    let feedback = this._http.get("http://52.11.53.90/cbsapp/cbslogin/insertFeedback.php",{search:params});
+    let feedback = this._http.get("https://mycbsexambooks.com/cbsapp/cbslogin/insertFeedback.php",{search:params});
     //console.log(movieData);
     return feedback;
   };//
 
+  resetPasswordLink(data: any) {
+    let params: URLSearchParams = this.objToSearchParams(data);
+    return this._http.get("https://mycbsexambooks.com/cbsapp/cbslogin/reset_password.php", { search: params });
+  }
+
+  getAnalyticsData(data:any){
+    let params: URLSearchParams = this.objToSearchParams(data);
+    console.log(params);
+    let getAnalytics = this._http.get("https://mycbsexambooks.com/cbsapp/cbslogin/getAnalytics.php", { search: params });
+    //console.log(movieData);
+    return getAnalytics;
+  }
+  sendAnalyticsData(data:any){
+    let params: URLSearchParams = this.objToSearchParams(data);
+    console.log(params);
+    let sendAnalytics = this._http.get("https://mycbsexambooks.com/cbsapp/cbslogin/insertAnalytics.php", { search: params });
+    //console.log(movieData);
+    return sendAnalytics;
+  }
+
   insertGrandLevelSubmitData(data:any){
     let params: URLSearchParams = this.objToSearchParams(data);
     console.log(params);
-    let levelClearInsertRequest = this._http.get("http://52.11.53.90/cbsapp/cbslogin/insertGrandScore.php",{search:params});
+    let levelClearInsertRequest = this._http.get("https://mycbsexambooks.com/cbsapp/cbslogin/insertGrandScore.php",{search:params});
     return levelClearInsertRequest;
   }
 
-  insertMegaLevelClearData(data:any){
+  insertMegaLevelSubmitData(data:any){
     let params: URLSearchParams = this.objToSearchParams(data);
     console.log(params);
-    let levelClearInsertRequest = this._http.get("http://52.11.53.90/cbsapp/cbslogin/insertMegaScore.php",{search:params});
+    let levelClearInsertRequest = this._http.get("https://mycbsexambooks.com/cbsapp/cbslogin/insertMegaScore.php",{search:params});
     return levelClearInsertRequest;
   }
 
@@ -318,7 +290,7 @@ export class UserdataService {
  }
 
    getPackageDesciption(id:string){ 
-    let packageToc = this._http.get(`https://s3-us-west-2.amazonaws.com/cbsapp/package_content/${id}/description/description.json`).map((res: Response) => res.json());
+    let packageToc = this._http.get(`${this.baseUrlPackage}${id}/description/description.json`).map((res: Response) => res.json());
     return packageToc;
   }
 
@@ -326,12 +298,12 @@ export class UserdataService {
   getGrandLevelScore(data:any) {
     let params: URLSearchParams = this.objToSearchParams(data);
     console.log(params);
-    // let packageGrandLevelRequest = this._http.get("http://52.11.53.90/cbsapp/cbslogin/getUserGrandLevel.php",{search:params});
+    // let packageGrandLevelRequest = this._http.get("https://mycbsexambooks.com/cbsapp/cbslogin/getUserGrandLevel.php",{search:params});
     // return packageGrandLevelRequest;
 
     return Observable.forkJoin(
-        this._http.get('http://52.11.53.90/cbsapp/cbslogin/getUserGrandLevel.php',{search:params}).map((res:Response) => res.json()),
-        this._http.get('http://52.11.53.90/cbsapp/cbslogin/getUserMegaLevel.php',{search:params}).map((res:Response) => res.json())
+        this._http.get('https://mycbsexambooks.com/cbsapp/cbslogin/getUserGrandLevel.php',{search:params}).map((res:Response) => res.json()),
+        this._http.get('https://mycbsexambooks.com/cbsapp/cbslogin/getUserMegaLevel.php',{search:params}).map((res:Response) => res.json())
     );//
 
   };//
@@ -341,55 +313,61 @@ export class UserdataService {
   getBothLevels(data:any) {
     let params: URLSearchParams = this.objToSearchParams(data);
     console.log(params);
-    // let packageGrandLevelRequest = this._http.get("http://52.11.53.90/cbsapp/cbslogin/getUserGrandLevel.php",{search:params});
+    // let packageGrandLevelRequest = this._http.get("https://mycbsexambooks.com/cbsapp/cbslogin/getUserGrandLevel.php",{search:params});
     // return packageGrandLevelRequest;
 
-    return this._http.get('http://52.11.53.90/cbsapp/cbslogin/getUserLevelsFromBoth.php',{search:params})
+    return this._http.get('https://mycbsexambooks.com/cbsapp/cbslogin/getUserLevelsFromBoth.php',{search:params})
 
   };//
 
   getBothLevelsForDashboard(data:any) {
     let params: URLSearchParams = this.objToSearchParams(data);
     console.log(params);
-    // let packageGrandLevelRequest = this._http.get("http://52.11.53.90/cbsapp/cbslogin/getUserGrandLevel.php",{search:params});
+    // let packageGrandLevelRequest = this._http.get("https://mycbsexambooks.com/cbsapp/cbslogin/getUserGrandLevel.php",{search:params});
     // return packageGrandLevelRequest;
 
-    return this._http.get('http://52.11.53.90/cbsapp/cbslogin/getUserLevelFromBothDashboard.php',{search:params})
+    return this._http.get('https://mycbsexambooks.com/cbsapp/cbslogin/getUserLevelFromBothDashboard.php',{search:params})
 
   };//
+
+  getAlLevelDataForDashboard(data:any){
+    let params: URLSearchParams = this.objToSearchParams(data);
+    console.log(params);
+    return this._http.get('https://mycbsexambooks.com/cbsapp/cbslogin/getLevelAllDataForDashboard.php',{search:params})
+  }
 
   getUniqueIdStatus(data:any){
     let params: URLSearchParams = this.objToSearchParams(data);
     console.log(params);
-    let uniqueIdStatusREquestRequest = this._http.get("http://52.11.53.90/cbsapp/cbslogin/verifyUniqueId.php",{search:params});
+    let uniqueIdStatusREquestRequest = this._http.get("https://mycbsexambooks.com/cbsapp/cbslogin/verifyUniqueId.php",{search:params});
     return uniqueIdStatusREquestRequest;
   }
 
   updateUniqueIdAndInsertIntoPurchaseMaster(data:any){
     let params: URLSearchParams = this.objToSearchParams(data);
     console.log(params);
-    let uniqueIdStatusREquestRequest = this._http.get("http://52.11.53.90/cbsapp/cbslogin/addNewUserPackage.php",{search:params});
+    let uniqueIdStatusREquestRequest = this._http.get("https://mycbsexambooks.com/cbsapp/cbslogin/addNewUserPackage.php",{search:params});
     return uniqueIdStatusREquestRequest;
   }
 
   getPackageDetailFromPackageMaster(data:any){
     let params: URLSearchParams = this.objToSearchParams(data);
     console.log(params);
-    let packageDetailRequest = this._http.get("http://52.11.53.90/cbsapp/get_package_by_id.php",{search:params});
+    let packageDetailRequest = this._http.get("https://mycbsexambooks.com/cbsapp/get_package_by_id.php",{search:params});
     return packageDetailRequest;
   }
 
   deleteAllRowsForUserFromGrandScoreMaster(data:any){
     let params: URLSearchParams = this.objToSearchParams(data);
     console.log(params);
-    let packageDetailRequest = this._http.get("http://52.11.53.90/cbsapp/cbslogin/deleteFromGrandScore.php",{search:params});
+    let packageDetailRequest = this._http.get("https://mycbsexambooks.com/cbsapp/cbslogin/deleteFromGrandScore.php",{search:params});
     return packageDetailRequest;
   }
 
   deleteAllRowsForUserFromMegaScoreMaster(data:any){
     let params: URLSearchParams = this.objToSearchParams(data);
     console.log(params);
-    let packageDetailRequest = this._http.get("http://52.11.53.90/cbsapp/cbslogin/deleteFromMegaScore.php",{search:params});
+    let packageDetailRequest = this._http.get("https://mycbsexambooks.com/cbsapp/cbslogin/deleteFromMegaScore.php",{search:params});
     return packageDetailRequest;
   }
 
@@ -402,7 +380,7 @@ export class UserdataService {
 /*-- This set the questionsData along with packageId in indexedDb--*/
 setQuestionDataIndexedDb(packageId:string,data:any):void{
   this._storage.set(packageId, data).then(() => {
-      console.log('value added', packageId)
+      console.log('value added', data)
     })
 }
 
@@ -417,7 +395,7 @@ getQuestionDataIndexedDb(id:string):void{
 /*-- This set the imageQuestionsData along with packageId in indexedDb--*/
 setImageQuestionDataIndexedDb(packageId:string,data:any):void{
   this._storage.set("image_"+packageId, data).then(() => {
-      console.log('value added', packageId)
+      console.log('value added', data)
     })
 }
 

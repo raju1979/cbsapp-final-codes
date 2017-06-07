@@ -63,7 +63,7 @@ page-package-view {
     }
     .descriptionArea ul
     {
-        list-style-image: url(../assets/img/bullet.png);
+        // list-style-image: url(../assets/img/bullet.png);
         font-size: 1.5rem;
         padding: 10px 20px;
     }
@@ -148,6 +148,11 @@ page-package-view {
     .authorList div
     {
         flex: 1;
+    }
+
+    .boldTextForHeading{
+        font-weight: bold;
+        font-size: 1.5em;
     }
 
 }

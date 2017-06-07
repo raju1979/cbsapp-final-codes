@@ -2,7 +2,7 @@ page-login-page {
     #loginContainer {
         width: 100%;
         height: 100%;
-        background-color: #670000;
+        background-color: color($colors, appblue);
         position: absolute;
         font-family: "Arsenal", sans-serif !important;
         left: 0;
@@ -12,7 +12,12 @@ page-login-page {
         align-items: center;
         flex-direction: column;
     }
-    #loginFormContainer {
+    .loginPageSection
+    {
+        width: 100%;
+    }
+    #loginFormContainer,
+    #forgotpasswordlink {
         width: 80%;
         padding: 10px;
         margin: 0 auto;
@@ -24,7 +29,7 @@ page-login-page {
         border-bottom: 1px solid red;
     }
     .input input::-webkit-input-placeholder {
-        color: #006064;
+        color: color($colors, appblue);
         font-weight: bold;
     }
     .login-item {
@@ -89,9 +94,48 @@ page-login-page {
         color: #fff;
         box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12), 0 3px 1px -2px rgba(0,0,0,0.2);
     }
-
+    #loginFormContainer p
+    {
+        height: 20px;
+        text-align: center;
+    }
     span.iconContainer{
         width: 80px;
         text-align: center;
+    }
+    #forgotpasswordlink {
+        width: 100%;
+        text-align: center;
+    }
+    #forgotpasswordlink p
+    {
+        margin: 0;
+    }
+    #forgotpasswordlink p a
+    {
+        font-size: 1.5em;
+        color: #fff;
+        display: inline-block;
+        padding: 8px 0;
+    }
+    .loadingDiv
+    {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    #signUpLink {
+        width: 100%;
+        text-align: center;
+    }
+    #signUpLink p{
+        width: 100%;
+        color: #acacac;
+        font-size: 1.5em;
+        margin: 0;
+    }
+    #signUpLink p a{ 
+        color: #fff; 
     }
 }

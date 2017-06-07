@@ -74,7 +74,7 @@ export class MyshelfPage {
         this.fs = cordova.file.documentsDirectory;
     }
     else if (this.platform.is('android')) {
-        this.fs = cordova.file.externalRootDirectory;
+        this.fs = cordova.file.dataDirectory;
     }
 
     this.networkType = this._network.type;
@@ -252,7 +252,7 @@ export class MyshelfPage {
   showNoNetworkAlert():void{
     let alert = this.alertCtrl.create({
       title: 'Not Online!',
-      subTitle: 'we are unable to fetch you online packages. Please connect to the Internet and restart the app!',
+      subTitle: 'Please check your internet connection!',
       buttons: ['OK']
     });
     alert.present();

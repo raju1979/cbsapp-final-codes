@@ -35,12 +35,22 @@ export class Feedback {
 
   packagesHttpRequestCompleted:boolean = false;
 
+  loaderVisible:boolean = false;
+
 
   constructor(public navCtrl: NavController, public navParams: NavParams, private _userDataService: UserdataService, private _storage: Storage, public platform: Platform, private alertCtrl: AlertController, private _loadingController: LoadingController, private _toastCtrl:ToastController,private _network:Network, private _file:File) {
 
     console.log(moment().format('DD-MM-YYYY HH:mm:ss'));
 
   }
+
+  ionViewWillLeave() {
+    console.log("Looks like I'm about to leave :(");
+    if(this.loaderVisible){
+      this.loaderVisible = false;
+      this.loading.dismiss();
+    }
+  };//
 
   showFormData() {
     if (typeof this.bookname !== 'undefined') {
@@ -65,10 +75,10 @@ export class Feedback {
           if (status == 200 && data.success == "true") {
             this.showFeedbackSubmittedAlert();
           } else {
-            this.showError('some error');
+            this.showDataFetchErrorFromServer();
           }
         },
-        (err) => this.showError('some error')
+        (err) => this.showDataFetchErrorFromServer()
         )
     }else{
       this.showNoPackageSelectedToast();
@@ -81,14 +91,14 @@ export class Feedback {
       content: 'Please wait...'
     });
 
-    if (this.platform.is("mobile") && this._network.type == 'NONE') {
+    if (this.platform.is("mobile") && this._network.type == 'none') {
       this.showNoNetworkAlert();
     } else {
       this._storage.get("user_master")
         .then((data) => {
           if (data == null) {
             console.log("no user data found");
-            this.showError('error');
+            this.showDataFetchErrorFromServer();
           } else {
             this.getUserOnlinePackages(data.user_id);
             this.userData = data;
@@ -104,7 +114,7 @@ export class Feedback {
     this._userDataService.getAllPackageByUser(id)
       .subscribe(
       (data) => this.getPackages(data),
-      (err) => this.showError(err)
+      (err) => this.showDataFetchErrorFromServer()
       );
   }//end getUserOnlinePackages
 
@@ -122,24 +132,29 @@ export class Feedback {
     }
   }//end getPackages
 
-  showError(err: any): void {
-    this.loading.dismiss();
-    let alert = this.alertCtrl.create({
-      title: 'Error!',
-      subTitle: 'There is some error from server. Please connect to the Internet and restart the app!',
-      buttons: ['OK']
-    });
-    alert.present();
-  };//end showError
-
   showNoNetworkAlert(): void {
+    if(this.loaderVisible){
+      this.loading.dismiss();
+    }        
     let alert = this.alertCtrl.create({
       title: 'Not Online!',
-      subTitle: 'we are unable to fetch you online questions. Please connect to the Internet and restart the app!',
+      subTitle: 'Please check your internet connection!',
       buttons: ['OK']
     });
     alert.present();
-  };//end showNoNetworkAlert
+  };//
+
+  showDataFetchErrorFromServer(): void {
+    if(this.loaderVisible){
+      this.loading.dismiss();
+    } 
+    let alert = this.alertCtrl.create({
+      title: 'Error!',
+      subTitle: `There is some problem at server. Please check your network connection!`,
+      buttons: ['OK']
+    });
+    alert.present();
+  };//
 
   showNoPackageAlert(): void {
     let alert = this.alertCtrl.create({
@@ -152,8 +167,8 @@ export class Feedback {
 
   showFeedbackSubmittedAlert(): void {
     let alert = this.alertCtrl.create({
-      title: 'Thanks!',
-      subTitle: 'Thanks for your valuable feedback!',
+      title: 'Feedback Submitted!',
+      subTitle: 'Thanks for your valuable time.',
       buttons: ['OK']
     });
     alert.present();
@@ -172,6 +187,31 @@ export class Feedback {
     });
 
     toast.present();
+  };//
+
+  presentLoading(msg?:string) {
+
+      this.loading = this._loadingController.create({
+          content: `Please wait...${msg}`,
+          showBackdrop: true, //dark background while loading
+          dismissOnPageChange: true
+      });
+
+      this.loaderVisible = true;
+
+      this.loading.onDidDismiss(() => {
+        console.log('Dismissed loading');
+        this.loaderVisible = false;
+      });
+
+      this.loading.present();
+
+  };//
+
+  dismissLoader(){
+    setTimeout(() => {
+      this.loading.dismiss();
+    },500)    
   };//
 
 

@@ -5,10 +5,10 @@
         <ion-icon name="menu"></ion-icon>
       </button>
     </ion-buttons>
-    <ion-title align="center">CBS EXAM BOOKS</ion-title>
+    <ion-title align="center"></ion-title>
     <ion-buttons end>
-      <button ion-button icon-only color="" (click)="enableMenu2()">
-        <!--<ion-icon name="apps"></ion-icon>-->
+      <button ion-button icon-only color="" class="fadeIt">
+        <ion-icon name="apps"></ion-icon>
       </button>
     </ion-buttons>
   </ion-toolbar>
@@ -20,8 +20,10 @@
   <div class="homeScreenBox">
     <div class="selectCatagoryList">
       <div class="homeScreenHead">
+        <img src="assets/img/cbslogo.png" alt=""/>
         <h4>Welcome to</h4>
         <h3>CBS Exam Books</h3>
+        <p class="embarkText">Embarking a new Era of building knowledge...</p>
       </div>
       <div class="selectCatagoryBox">
         <a (click)="itemSelected(genreArray[0])">PGMEE / Medical MCQs</a>
@@ -35,6 +37,13 @@
       <div class="selectCatagoryBox">
         <a (click)="itemSelected(genreArray[3])">Nursing Competitive Exams / Nursing MCQs</a>
       </div>
+    </div>
+
+    <div class="bottomText">
+      <p>An initiative by</p>
+      <p><strong>CBS Publishers &amp; Distributors Pvt. Ltd.</strong></p>
+      <p><em>Branches</em></p>
+      <p><span>Delhi</span> <span>Kolkata</span> <span>Mumbai</span> <span> Bangalore</span> <span> Chennai</span> <span> Kochi</span> </p>
     </div>
   </div>
 
@@ -92,3 +101,6 @@
 
 
 </ion-content>
+<ion-footer>
+  <!--<p>CBS Publishers & Distributors</p>-->
+</ion-footer>

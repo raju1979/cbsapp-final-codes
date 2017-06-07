@@ -87,4 +87,8 @@ page-complete-view {
         align-items: center;
         flex-direction: column;
     }
+
+    .label-md, .label-ios{
+        white-space: initial !important;
+    }
 }

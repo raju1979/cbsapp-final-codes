@@ -1,13 +1,17 @@
 <ion-header>
 
-    <ion-navbar color="appblue">
+    <ion-navbar color="appblue"  [hideBackButton]="true" *ngIf="!showPopoverDiv">
         <ion-title align="center">Review Test</ion-title>
-        <ion-buttons end>
-            <!--<p class="timerText">01:00</p>-->
+        <ion-buttons start>      
+            <button ion-button icon-only color="light" [hidden]="testRunning" (click)="gotoPreviousScreen()" #backbutton>
+                <ion-icon ios="ios-arrow-back" md="md-arrow-back"></ion-icon>
+            </button>
+        </ion-buttons>
+        <!--<ion-buttons end>
             <button ion-button icon-only color="light" (click)="showStats()">
                 <ion-icon name="grid"></ion-icon>
             </button>
-        </ion-buttons>
+        </ion-buttons>-->
     </ion-navbar>
 
 </ion-header>
@@ -19,48 +23,99 @@
             <p padding-left>Questions {{currentQuestion+1}} of {{questionSetChosen.length}}</p>
             <div class="questionText">
                 <h4 [innerHTML]="questionSetChosen[currentQuestion]?.questiondata.question"></h4>
-                <img [src]="questionSetChosen[currentQuestion]?.questiondata.questionImgUrl" alt="" *ngIf="questionSetChosen[currentQuestion]?.questiondata.questionImgUrl != 'NA' "
-                />
+                <!--<img [src]="questionSetChosen[currentQuestion]?.questiondata.questionImgUrl" alt="" *ngIf="questionSetChosen[currentQuestion]?.questiondata.questionImgUrl != 'NA' "
+                />-->
             </div>
             <div class="answersList">
                 <p class="answersListItem" *ngFor="let option of questionSetChosen[currentQuestion]?.optiondata.options, let optionIndex = index" (click)="checkAnswer(currentQuestion,optionIndex)">
                     <span class="ionIcon"><ion-icon name="radio-button-on" [color]="'grey2'"></ion-icon></span>
-                    <span id="optiontext" [class]="getOptionColor(selectedIndex,questionSetChosen[currentQuestion]?.rightanswerdata.rightanswer[0].order,optionIndex)">{{option.optiontext}}</span>
+                    <span id="optiontext" [class]="getOptionColor(selectedIndex,questionSetChosen[currentQuestion]?.rightanswerdata.rightanswer[0].order,optionIndex)" [innerHTML]="sanitizeOptionText(option.optiontext)"></span>
                 </p>
             </div>
 
             <div class="explainBtnContainer">
-                <button ion-button icon-left large color="appblue" (click)="showExplanation()">
+                <button ion-button icon-left  color="appblue" (click)="showExplanation()">
                     <span [ngSwitch]="shouldShowExplanation">
                         <ion-icon name="add-circle" *ngSwitchCase=false></ion-icon>
                         <ion-icon name="remove-circle" *ngSwitchCase=true></ion-icon>
                     </span>
                     <span>Show Answer</span>
                 </button>
-                <div class="totalAnswersText">Correct {{totalCorrectAnswers}}</div>
+                <!--<div class="totalAnswersText">Correct {{totalCorrectAnswers}}</div>-->
             </div>
             <div id="questionExplaitonContainer" *ngIf="shouldShowExplanation" [@fadeInOut]="shouldShowExplanation">
-                <p>Currect Answer : <span>{{questionSetChosen[currentQuestion]?.rightanswerdata.rightanswer[0].answer}}</span></p>
+                <p>Currect Answer : <span [innerHTML]="questionSetChosen[currentQuestion]?.rightanswerdata.rightanswer[0].answer"></span></p>
                 <p>Explaination : <span [innerHTML]="questionSetChosen[currentQuestion]?.questiondata.explanation"></span></p>
+                <p>Reference : <span [innerHTML]="questionSetChosen[currentQuestion]?.questiondata.reference"></span></p>
             </div>
         </div>
     </div>
+
+    <ion-fab left bottom #fabpopover *ngIf="showPopoverDiv">
+        <button ion-fab color="appblue" (click)="scrollResultViewContainerToTop()"><ion-icon name="ios-arrow-dropup-outline"></ion-icon></button>
+    </ion-fab>
+
+
+    <div id="resultViewContainer"  *ngIf="showPopoverDiv"  >
+    <div id="resultTextContainer">Result</div>
+    <div id="resultShowContainer" #resultViewContainer>
+      <ion-list>
+        <div class="resultTexts"><span>Total Questions</span><span>{{resultObject.totalQuestions}}</span></div>
+        <div class="resultTexts"><span>Correct Answers</span><span>{{resultObject.totalCorrectAnswers}}</span></div> 
+        <div class="resultTexts"><span>Wrong Answers</span><span>{{resultObject.totalWrongAnswers}}</span></div> 
+        <div class="resultTexts"><span>Skipped Questions</span><span>{{resultObject.skippedQuestions}}</span></div>
+        <div class="resultTexts"><span>Percentage</span><span>{{resultObject.percentMarks}}%</span></div>
+        <!--<div class="resultTexts"><span>Pass Percentage</span><span>{{passingMarks}}%</span></div>
+        <div class="resultTexts"><span>Level Cleared</span><span>{{resultObject.percentMarks >= passingMarks ? "Clear" : "Not Clear"}}</span></div>-->
+
+      </ion-list>
+
+      <ion-card *ngFor="let question of questionSetChosen, let i = index">
+            <ion-card-header class="questionTextHeader" text-wrap>
+                <span>Q:{{i+1}}</span> :: <span [innerHTML] = "question.questiondata.question" class="questionTextInnerHtml"></span>
+            </ion-card-header>
+            <ion-card-content>
+            <section class="correctAnswerContainer">
+                <span class="corectAnswerHeading">Correct Answer</span><span>{{question.rightanswerdata.rightanswer[0].answer}}</span>
+            </section>
+            <section class="correctAnswerContainer">
+                <span class="corectAnswerHeading">Your Answer</span><span [innerHTML]="getUserSelectedAnswer(question)"></span>
+            </section>
+            <section class="correctAnswerContainer">
+                <span  [innerHTML]="isAnswerCorrect(question)" ion-text [color]="setAnswerColor(question)"></span>
+            </section>
+            </ion-card-content>
+        </ion-card>
+        </div>
+        <div id="resultBtnContainer">
+        <div id="btnInnerContainer">
+            <button ion-button full clear color="light" (click)="closeResultPopover()">Close</button>
+        </div>
+        </div>
+    </div>
+  <!--end iv id="resultViewContainer"-->
+
+  <ion-fab right bottom #fab >
+    <button ion-fab color="appblue" (click)="showStats()"><ion-icon name="md-grid"></ion-icon></button>
+    
+  </ion-fab>
+
+
 </ion-content>
 
-<ion-footer align="center" color="appblue">
-    <!--<ion-toolbar color="light">
-        <ion-buttons>
-            <button ion-button icon-only>
-                <ion-icon name="pause" color="appblue"></ion-icon>
-            </button>
-             <button ion-button icon-only>
-
-            </button>
-            <button ion-button icon-only>
-                <ion-icon name="log-out" color="appblue"></ion-icon>
+<ion-footer align="center" color="appblue"   *ngIf="!showPopoverDiv">
+    <ion-toolbar color="light">
+        <ion-buttons start>
+            <button ion-button icon-left>
+                <ion-icon name="square" color="secondary"></ion-icon>Correct
+            </button>            
+        </ion-buttons>
+        <ion-buttons end>
+            <button ion-button icon-left>
+                <ion-icon name="square" color="danger"></ion-icon>Incorrect
             </button>
         </ion-buttons>
-    </ion-toolbar>-->
+    </ion-toolbar>
     <ion-toolbar color="appblue">
         <ion-buttons start>
             <button ion-button icon-only (click)="prevQuestion()">
@@ -68,6 +123,11 @@
                  <span class="opaqueText">PREVIOUS</span>
             </button>
         </ion-buttons>
+
+        <button ion-button large clear (click)="checkMyProgress()" color="light">
+            <span>Finish</span>
+        </button>
+
         <ion-buttons end>
             <button ion-button icon-only (click)="nextQuestion()">
                 <span class="opaqueText">NEXT....</span>

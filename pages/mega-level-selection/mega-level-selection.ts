@@ -73,7 +73,7 @@ export class MegaLevelSelection {
       this.fs = cordova.file.documentsDirectory;
     }
     else if (this.platform.is('android')) {
-      this.fs = cordova.file.externalRootDirectory;
+      this.fs = cordova.file.dataDirectory;
     }
 
     this.isGuestUser = this.navParams.get('guestUser');
@@ -216,8 +216,8 @@ export class MegaLevelSelection {
       lastQuestionAttempted: 0,
       packageId: this.packageIdPasssed,
       questions: _.shuffle(localQuestionsArray),
-      originalTimeAlloted:200,//responseData.levels[suppliedLevel].timeDuration * 60
-      secondsRemaining: 200,//(responseData.levels[suppliedLevel].timeDuration * 60),
+      originalTimeAlloted:responseData.levels[suppliedLevel].timeDuration * 60,
+      secondsRemaining: (responseData.levels[suppliedLevel].timeDuration * 60),
       allLevelCleared: false
     }
     this._userDataService.setMegaQuestionDataIndexedDb(this.packageIdPasssed, data);//set data into indexedDb
@@ -231,7 +231,7 @@ export class MegaLevelSelection {
     this.loader.dismiss();
     let alert = this.alertCtrl.create({
       title: 'Not Online!',
-      subTitle: 'we are unable to fetch you online questions. Please connect to the Internet and restart the app!',
+      subTitle: 'We are unable to fetch questions. Please check your internet connection!',
       buttons: ['OK']
     });
     alert.present();
@@ -242,7 +242,7 @@ export class MegaLevelSelection {
     let errorMsg: any = JSON.stringify(err);
     let alert = this.alertCtrl.create({
       title: 'Error!',
-      subTitle: `There is some problem at server. Please check your network connection and Restart the App!<br />${errorMsg}`,
+      subTitle: `There is some problem at server. Please check your network connection!`,
       buttons: ['OK']
     });
     alert.present();
@@ -264,7 +264,7 @@ export class MegaLevelSelection {
   showLocalFileReadErrorAlert(): void {
     let alert = this.alertCtrl.create({
       title: 'Error!',
-      subTitle: 'There is osme error in getitng the data. Please restart the App!',
+      subTitle: 'There is osme error in getting the data. Please restart the App!',
       buttons: ['OK']
     });
     alert.present();
@@ -284,7 +284,7 @@ export class MegaLevelSelection {
   showAllLevelAlreadyClearedAlert(): void {
     let alert = this.alertCtrl.create({
       title: 'Maximum Level Reached!',
-      subTitle: 'You have already reached maxiumum level for this book!',
+      subTitle: 'You have already reached highest level, press Reset button to practice test from Level 1',
       buttons: ['OK']
     });
     alert.present();
@@ -367,8 +367,8 @@ export class MegaLevelSelection {
       lastQuestionAttempted: 0,
       packageId: this.packageIdPasssed,
       questions: _.shuffle(localQuestionsArray),
-      originalTimeAlloted:200,//responseData.levels[0].timeDuration * 60,
-      secondsRemaining: 200,//(responseData.levels[suppliedLevel].timeDuration * 60),
+      originalTimeAlloted:responseData.levels[0].timeDuration * 60,
+      secondsRemaining: (responseData.levels[suppliedLevel].timeDuration * 60),
       allLevelCleared: this.allLevelCleared
     }
     console.log(data);
@@ -395,7 +395,7 @@ export class MegaLevelSelection {
   showResetTestAlert(): void {
     let alert = this.alertCtrl.create({
       title: 'Reset the test!',
-      subTitle: 'This will reset the whole test. Are you sure...!',
+      subTitle: 'Do you want to reset the levels. Press OK to reset!',
       buttons: [
         {
           text: 'Cancel',
@@ -423,7 +423,8 @@ export class MegaLevelSelection {
         }else{
           console.log("User data is",data);
           let userData = {
-            user_id:data.user_id
+            user_id:data.user_id,
+            package_id:this.packageIdPasssed
           }
 
           this.loader = this.loadingCtrl.create({

@@ -240,7 +240,7 @@ export class AddPasscodePage {
   showNoNetworkAlert(): void {
     let alert = this._alertCtrl.create({
       title: 'Not Online!',
-      subTitle: 'we are unable to fetch you online packages. Please connect to the Internet and restart the app!',
+      subTitle: 'Please check your internet connection!',
       buttons: ['OK']
     });
     alert.present();

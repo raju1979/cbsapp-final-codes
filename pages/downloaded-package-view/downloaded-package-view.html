@@ -49,7 +49,7 @@
                 <h4>Sample Pages</h4>
                 <div>
                     <p (click)="showMainBookImages()">
-                        View Book Content
+                        View Book Pages
                     </p>
                 </div>
             </div>
@@ -61,18 +61,18 @@
                 <div id="learningTutorialOuterContainer" *ngIf="shouldShowLearningContainer">
                     <div>
                         <p *ngFor="let url of tocJsonData?.youtubeUrls let i=index" (click)="openVideo(url)">
-                            Open Video {{i+1}}
+                            Lecture {{i+1}}
                             <ion-icon name="play" color="danger"></ion-icon>
                         </p>
                     </div>
                 </div>
             </div>
 
-           <div class="packageList" *ngIf="isGuestUser == false">
+           <div class="packageList" *ngIf="tocJsonData?.additionalPdfs.length > 0">
                 <h4>Additional Reading</h4>
                 <div>
-                    <p (click)="showAdditionalBookImages()">
-                        View Book Content
+                    <p (click)="showAdditionalBookImages(book.images, book.imagePath)" *ngFor="let book of tocJsonData?.additionalPdfs">
+                        {{book.name}}
                     </p>
                 </div>
             </div>

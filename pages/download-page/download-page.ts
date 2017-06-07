@@ -45,7 +45,7 @@ export class DownloadPage {
         this.fs = cordova.file.documentsDirectory;
     }
     else if (this.platform.is('android')) {
-        this.fs = cordova.file.externalRootDirectory;
+        this.fs = cordova.file.dataDirectory;
     }
 
     this.baseUrlPackage = this._userDataService.returnBaseUrlPackage();

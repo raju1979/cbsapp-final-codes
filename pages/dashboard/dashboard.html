@@ -1,9 +1,3 @@
-<!--
-  Generated template for the Dashboard page.
-
-  See http://ionicframework.com/docs/v2/components/#navigation for more info on
-  Ionic pages and navigation.
--->
 <ion-header>
   <ion-navbar color="appblue">
     <ion-title align="center">Dashboard</ion-title>
@@ -14,19 +8,68 @@
     </ion-buttons>
   </ion-navbar>
 </ion-header>
+
 <ion-content padding>
-  <div class="dashboardData" *ngIf="!noResultFound">
+  <!--<div class="dashboardData" *ngIf="!noResultFound">
     <ul *ngFor="let package of pkgLevelObj, let i = index">
       <li>
         <h3>{{package.original_title}}</h3>
-        <!--<p>Subject Grand Test - <b>Level {{package.max_grand_level}} of 5</b> {{package.grand_percent_marks}}% <span class="levelClearText">{{package.grand_cleared}}</span></p>-->
+        <p>Subject Grand Test - <b>Level {{package.max_grand_level}} of 5</b> {{package.grand_percent_marks}}% <span class="levelClearText">{{package.grand_cleared}}</span></p>
         <p [innerHTML]="getGrandDashboardText(package)"></p>
         <p [innerHTML]="getMegaDashboardText(package)"></p>
-        <!--<p>Mega Grand Test - <b>Level {{package.max_mega_level}} of 3</b> {{package.mega_percent_marks}}% <span class="levelClearText">{{package.mega_cleared}}</span></p>-->
+        <p>Mega Grand Test - <b>Level {{package.max_mega_level}} of 3</b> {{package.mega_percent_marks}}% <span class="levelClearText">{{package.mega_cleared}}</span></p>
       </li>
     </ul>
+  </div>-->
+
+  <div class="dashboardData">
+
+    <ion-card *ngFor="let package of pkgLevelObj, let i = index">
+      <ion-card-header>
+        <h3>{{package?.original_title}}</h3>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="dashboardActionBtns">
+          <button ion-button color="fullblack" (click)="showResult(package,'Subject Grand')">View Grand Test Score</button>
+          <button ion-button color="fullblack" (click)="showResult(package,'Mega Grand')">View Mega Grand Test Score</button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
   </div>
-  <div class="noPackageFoundContainer" *ngIf="packagesHttpRequestCompleted && noResultFound">
+
+
+  <div class="dashboardPopUp" *ngIf="showpopup">
+    <div class="dashboardPopUpData">
+      <h4>{{testTypeToShow?.name}} : {{testTypeToShow?.type}}</h4>
+      <table>
+        <thead>
+          <tr>
+            <th>S. No.</th>
+            <th>Level</th>
+            <th>Date</th>
+            <th>%</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of levelsTestDataArray, let i = index">
+            <td>{{i+1}}</td>
+            <td [innerHTML] = "getLevelNum(row)"></td>
+            <td [innerHTML] = "getLevelDate(row)">2017-04-14</td>
+            <td>{{row.percent_marks}}</td>
+            <td ion-text [color]="getTestClearColor(row)" [innerHTML]="getTestClearText(row)"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="dashboardPopUpClose">
+      <button clear ion-button block large color="light" (click)="closePopUp()">Close</button>
+    </div>
+  </div>
+
+
+  <div class="noPackageFoundContainer" *ngIf="noResultFound">
     <ion-card>
       <ion-card-header>
         No Package
@@ -36,5 +79,5 @@
       </ion-card-content>
     </ion-card>
   </div>
-  
+
 </ion-content>

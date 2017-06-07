@@ -39,8 +39,14 @@ import {MegaQuestions} from "../pages/mega-questions/mega-questions"
 import { ShowMegaStat } from '../pages/show-mega-stat/show-mega-stat';
 
 import { BookImagesViewer } from '../pages/book-images-viewer/book-images-viewer';
+import { BookAdditionalViewer } from '../pages/book-additional-viewer/book-additional-viewer';
 
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+
+import { ForgotpasswordPage } from '../pages/forgotpassword/forgotpassword';
+import { BacktoLoginPage } from '../pages/backto-login/backto-login';
+
+import { AboutUs } from '../pages/about-us/about-us';
 
 
 
@@ -100,12 +106,19 @@ import { SQLite, SQLiteObject } from '@ionic-native/sqlite';
     MegaLevelSelection,
     MegaQuestions,
     ShowMegaStat,
-    BookImagesViewer
+    BookImagesViewer,
+    BookAdditionalViewer,
+    ForgotpasswordPage,
+    BacktoLoginPage,
+    AboutUs
   ],
   imports: [
     BrowserModule,
     HttpModule,
-    IonicModule.forRoot(MyApp),
+    IonicModule.forRoot(MyApp,{
+      scrollAssist: false,    // Valid options appear to be [true, false]
+      autoFocusAssist: false
+    }),
     IonicStorageModule.forRoot(),
     BrowserAnimationsModule
   ],
@@ -140,7 +153,11 @@ import { SQLite, SQLiteObject } from '@ionic-native/sqlite';
     MegaLevelSelection,
     MegaQuestions,
     ShowMegaStat,
-    BookImagesViewer
+    BookImagesViewer,
+    BookAdditionalViewer,
+    ForgotpasswordPage,
+    BacktoLoginPage,
+    AboutUs
   ],
   providers: [
     StatusBar,

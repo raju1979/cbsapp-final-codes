@@ -5,6 +5,8 @@ import { Validators, FormBuilder } from '@angular/forms';
 import { Network} from '@ionic-native/network';
 import { SQLite, SQLiteObject } from '@ionic-native/sqlite';
 
+import { ForgotpasswordPage } from '../forgotpassword/forgotpassword';
+
 
 
 import { HelloIonicPage } from '../hello-ionic/hello-ionic';
@@ -51,7 +53,7 @@ export class LoginPage {
   isNetworkConnected: boolean = false;
 
   deviceUUID:string = '';
-
+  isIos: boolean = false;
   constructor(public navCtrl: NavController, public navParams: NavParams, private _zone: NgZone, private _menuController: MenuController, private _formBuilder: FormBuilder, private _userDataService: UserdataService, private _connectivityService: ConnectivityService, private _toastCtrl: ToastController, private _plaform: Platform, private _alert: AlertController, private _storage:Storage,private device:Device,private _network:Network) {
     let EMAIL_REGEXP = /^[^@]+@([^@\.]+\.)+[^@\.]+$/i;
     this.userdata = this._formBuilder.group({
@@ -62,6 +64,14 @@ export class LoginPage {
     if (this._plaform.is('mobile')) {
       this.db = new SQLite();
     }
+    
+    if(this._plaform.is('android')){
+      this.isIos = false;
+    }
+    if(this._plaform.is('ios')){
+      this.isIos = true;
+    }
+
 
     this._plaform.ready().then(x => {
 
@@ -110,7 +120,10 @@ export class LoginPage {
             console.log(JSON.stringify(data));
             if(data == null){
               //if user_master == null do nothing
+              this.user_logged = false;
+              console.log(this.user_logged);
             }else{
+              this.user_logged = true;
               this.setUserDataForSubscribeEvent(data);
               this.navigateToHomeRoot();
             }
@@ -127,6 +140,8 @@ export class LoginPage {
 
   ionViewWillLeave() {
     this._menuController.enable(true);
+    this.disconnectSubscription.unsubscribe();
+    this.connectSubscription.unsubscribe();
   }
 
   logForm() {
@@ -284,6 +299,13 @@ export class LoginPage {
     console.log(dummyObj);
   }
 
+  goToForgotPassPage() {
+    this.navCtrl.push(ForgotpasswordPage, {})
+  };
+  goToSignUp(){ 
+    window.open(`https://mycbsexambooks.com/`, '_system', 'location=yes'); 
+    return false;
+  }
 }//end class
 
 

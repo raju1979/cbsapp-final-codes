@@ -54,7 +54,7 @@ export class DownloadPopover {
       this.fs = cordova.file.documentsDirectory;
     }
     else if (this.platform.is('android')) {
-      this.fs = cordova.file.externalRootDirectory;
+      this.fs = cordova.file.dataDirectory;
     }
 
     if (this.platform.is('mobile')) {
@@ -82,7 +82,7 @@ export class DownloadPopover {
 
   //check if folder cbsapp exists
   checkPrimaryFolder() {
-    //this.fs = cordova.file.externalRootDirectory;
+    //this.fs = cordova.file.dataDirectory;
     this._file.checkDir(this.fs, this.mainDirectoryName).
       then(_ => this.createPackageDirectory(this.selectedPackageForDownload.id))
       .catch(err => this.createPrimaryDirectory());
@@ -120,7 +120,8 @@ export class DownloadPopover {
 
   downloadPackageFile(id: any) {
     console.log('download package id::' + id);
-    let url = `https://s3-us-west-2.amazonaws.com/cbsapp/package_content/${id}/${id}.zip`;
+    // let url = `https://s3-us-west-2.amazonaws.com/cbsapp/package_content/${id}/${id}.zip`;
+    let url = `https://s3.ap-south-1.amazonaws.com/cbspublisher/package_content/${id}/${id}.zip`;
     console.log(url);
     this.fileTransfer.download(url, this.fs + this.mainDirectoryName + "/" + id + "/" + 'package.zip').then((entry: any) => {
       this.packageDownloadComplete(entry, id);
@@ -181,11 +182,11 @@ export class DownloadPopover {
       //read the previous user_packages from indexedDb
       this._storage.get("user_packages")
         .then((data) => {
-          console.log("outside null" + JSON.stringify(data));
+          console.log("outside null for mobile" + JSON.stringify(data));
           
           if (data == null) {
             //if user_packages == null do nothing
-            console.log("inside null"+this.selectedPackageForDownload.id);
+            console.log("inside null for mobile"+this.selectedPackageForDownload.id);
             console.log("GUest user package",'false');
             this.existingPackagesInLocalDb.push({id:this.selectedPackageForDownload.id,details:this.selectedPackageForDownload})
           } else {//if some packages exists in localDb
@@ -193,10 +194,15 @@ export class DownloadPopover {
             console.log(this.existingPackagesInLocalDb);
             //loop in existingPackagesInLocalDb and find current packageId
             this.existingPackagesInLocalDb.forEach((elem,index) => {
-              if(elem == this.selectedPackageForDownload.id){
-                //this.existingPackagesInLocalDb = _.remove(this.existingPackagesInLocalDb,index);
+              if(elem == this.selectedPackageForDownload.id){//remove matched element from array
+                this.existingPackagesInLocalDb = this.existingPackagesInLocalDb.splice(index,1);
+                console.log("new array after matched removed first",this.existingPackagesInLocalDb )
               }
             });
+            
+            this.existingPackagesInLocalDb.push({id:this.selectedPackageForDownload.id,details:this.selectedPackageForDownload})
+
+            console.log("new array after matched removed and pushed",this.existingPackagesInLocalDb )
             console.log("selected package id::"+this.selectedPackageForDownload.id);         
             //this.existingPackagesInLocalDb.push(this.selectedPackageForDownload.id)
 
@@ -226,8 +232,8 @@ export class DownloadPopover {
 
   showFailureToast(msg?: string) {
     let toast = this._toastCtrl.create({
-      message: `Sorry ${JSON.stringify(msg)}`,
-      duration: 3000,
+      message: `Download Failed`,
+      duration: 1000,
       position: 'middle',
       dismissOnPageChange:true
     });

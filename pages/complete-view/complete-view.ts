@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams, AlertController,ToastController,Platform,LoadingController } from 'ionic-angular';
+import { NavController,ViewController, NavParams, AlertController,ToastController,Platform,LoadingController } from 'ionic-angular';
 
 import { UserdataService } from "../../services/userdata-service";
 import { QuestionsView } from '../questions-view/questions-view';
@@ -56,7 +56,7 @@ export class CompleteView {
   loader:any;
 
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public platform: Platform,private _userDataService: UserdataService, private _alertCtrl: AlertController, private _storage: Storage, private _toastCtrl:ToastController,private loadingCtrl: LoadingController,private _file:File,private _network: Network) {
+  constructor(public navCtrl: NavController, private viewCtrl:ViewController, public navParams: NavParams, public platform: Platform,private _userDataService: UserdataService, private _alertCtrl: AlertController, private _storage: Storage, private _toastCtrl:ToastController,private loadingCtrl: LoadingController,private _file:File,private _network: Network) {
 
 
 
@@ -71,7 +71,7 @@ export class CompleteView {
             this.fs = cordova.file.documentsDirectory;
         }
         else if (this.platform.is('android')) {
-            this.fs = cordova.file.externalRootDirectory;
+            this.fs = cordova.file.dataDirectory;
         }
 
 
@@ -84,7 +84,7 @@ export class CompleteView {
 
   populateQuestionsJsonFromService(data: any) {
     this.loader.dismiss();
-    this.questionsJson = data[0];
+    this.questionsJson = data;
     console.log('questions for array::',this.questionsJson);
     this.chaptersArray = new Array<any>(this.questionsJson.chapters.length);
     for(let i=0; i<this.chaptersArray.length; i++){
@@ -93,24 +93,32 @@ export class CompleteView {
         questions:this.questionsJson.chapters[i].data
       }
     }
-
+    
+    this.checkExistingOfflineReviewTestForUser();
     console.log(this.chaptersArray)
   };//
 
   ngOnInit() {
+    this.getPackageData();
+    //this.checkExistingOfflineReviewTestForUser()
+  };//
+
+  checkExistingOfflineReviewTestForUser(){
     this._storage.get("review_"+this.passedTocJson.id)
     .then((data) => {
       if(data !== null){
         this.presentContinueTestConfirm(0);
       }else{
         console.log("no package found")
-        this.getPackageData();
+        //this.getPackageData();
       }
     })
     .catch((err) => {
       console.log("package not found"+ err)
     })
-  };
+  }
+
+
 
   getPackageData(){
     if(this.platform.is('mobile') && !this.isGuestUser){
@@ -258,7 +266,7 @@ export class CompleteView {
 
   presentContinueTestConfirm(index: any) {
     this.alert = this._alertCtrl.create({
-      title: 'Continue With Previous Test',
+      title: 'Review Test',
       message: 'Do you want to continue your previous test!',
       buttons: [
         {
@@ -266,11 +274,11 @@ export class CompleteView {
           role: 'cancel',
           handler: () => {
             console.log('Cancel clicked');
-            this.getPackageData();
+            //this.getPackageData();
           }
         },
         {
-          text: 'GO Ahead',
+          text: 'Go Ahead',
           handler: () => {
             this.navigateToNextRoute(index,[1,2,3]);
           }//end success handle
@@ -283,7 +291,7 @@ export class CompleteView {
 
 presentNoChapterSelectedToast():void{
   let toast = this._toastCtrl.create({
-    message: 'Select at least One chapter to continue',
+    message: 'Select at least one chapter to start new test!',
     duration: 2000,
     position: 'middle'
   });
@@ -295,7 +303,7 @@ showDataFetchErrorFromServer(): void {
         //let errorMsg: any = JSON.stringify(err);
         let alert = this._alertCtrl.create({
             title: 'Error!',
-            subTitle: `There is some problem at server. Please check your network connection and Restart the App!`,
+            subTitle: `There is some problem at server. Please check your network connection!`,
             buttons: ['OK']
         });
         alert.present();
@@ -305,7 +313,7 @@ showNoNetworkAlert(): void {
     this.loader.dismiss();
     let alert = this._alertCtrl.create({
       title: 'Not Online!',
-      subTitle: 'we are unable to fetch you online questions. Please connect to the Internet and restart the app!',
+      subTitle: 'We are unable to fetch questions. Please check your internet connection!',
       buttons: ['OK']
     });
     alert.present();

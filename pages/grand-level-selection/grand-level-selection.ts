@@ -69,7 +69,7 @@ export class GrandLevelSelection {
       this.fs = cordova.file.documentsDirectory;
     }
     else if (this.platform.is('android')) {
-      this.fs = cordova.file.externalRootDirectory;
+      this.fs = cordova.file.dataDirectory;
     }
 
     this.isGuestUser = this.navParams.get('guestUser');
@@ -176,8 +176,7 @@ export class GrandLevelSelection {
 
   createNewGrandTest(levelNum: number) {
     this.loader = this.loadingCtrl.create({
-        content: "Please wait, creating new test...",
-        dismissOnPageChange:true
+        content: "Please wait, creating new test..."
     });
     this.loader.present();
 
@@ -234,15 +233,15 @@ export class GrandLevelSelection {
     let localQuestionsArray: any = [];
 
     console.log(responseData,suppliedLevel);
-    localQuestionsArray = responseData.levels[suppliedLevel].data;
+    localQuestionsArray = responseData.levels[0].data;
 
     data = {
       level: suppliedLevel,
       lastQuestionAttempted: 0,
       packageId: this.packageIdPasssed,
       questions: _.shuffle(localQuestionsArray),
-      originalTimeAlloted:200,//responseData.levels[suppliedLevel].timeDuration * 60,
-      secondsRemaining: 200,//(responseData.levels[suppliedLevel].timeDuration * 60),
+      originalTimeAlloted:responseData.levels[0].timeDuration * 60,
+      secondsRemaining: (responseData.levels[0].timeDuration * 60),
       allLevelCleared: false
     }
     console.log(data);
@@ -257,7 +256,7 @@ export class GrandLevelSelection {
     this.loader.dismiss();
     let alert = this.alertCtrl.create({
       title: 'Not Online!',
-      subTitle: 'we are unable to fetch you online questions. Please connect to the Internet and restart the app!',
+      subTitle: 'We are unable to fetch questions. Please check your internet connection!',
       buttons: ['OK']
     });
     alert.present();
@@ -268,7 +267,7 @@ export class GrandLevelSelection {
     let errorMsg: any = JSON.stringify(err);
     let alert = this.alertCtrl.create({
       title: 'Error!',
-      subTitle: `There is some problem at server. Please check your network connection and Restart the App!<br />${errorMsg}`,
+      subTitle: `There is some problem at server. Please check your network connection!`,
       buttons: ['OK']
     });
     alert.present();
@@ -290,7 +289,7 @@ export class GrandLevelSelection {
   showLocalFileReadErrorAlert(): void {
     let alert = this.alertCtrl.create({
       title: 'Error!',
-      subTitle: 'There is osme error in getitng the data. Please restart the App!',
+      subTitle: 'There is error in fetching the data. Please try again later!',
       buttons: ['OK']
     });
     alert.present();
@@ -309,8 +308,8 @@ export class GrandLevelSelection {
 
   showAllLevelAlreadyClearedAlert(): void {
     let alert = this.alertCtrl.create({
-      title: 'Maximum Level Reached!',
-      subTitle: 'You have already reached maxiumum level for this book!',
+      title: 'Highest Level Reached!',
+      subTitle: 'You have already reached highest level, press Reset button to practice test from Level 1',
       buttons: ['OK']
     });
     alert.present();
@@ -324,8 +323,7 @@ export class GrandLevelSelection {
       suppliedLevel = levelNum;
     }
     this.loader = this.loadingCtrl.create({
-        content: "Please wait, Fetching test data...",
-        dismissOnPageChange:true
+        content: "Please wait, fetching data..."
     });
     this.loader.present();
     
@@ -394,8 +392,8 @@ export class GrandLevelSelection {
       lastQuestionAttempted: 0,
       packageId: this.packageIdPasssed,
       questions: _.shuffle(localQuestionsArray),
-      originalTimeAlloted:200,//responseData.levels[0].timeDuration * 60,
-      secondsRemaining: 200,//(responseData.levels[suppliedLevel].timeDuration * 60),
+      originalTimeAlloted:responseData.levels[0].timeDuration * 60,
+      secondsRemaining: (responseData.levels[0].timeDuration * 60),
       allLevelCleared: this.allLevelCleared
     }
     console.log(data);
@@ -422,7 +420,7 @@ export class GrandLevelSelection {
   showResetTestAlert(): void {
     let alert = this.alertCtrl.create({
       title: 'Reset the test!',
-      subTitle: 'This will reset the whole test. Are you sure...!',
+      subTitle: 'Do you want to reset the levels. Press OK to reset!',
       buttons: [
         {
           text: 'Cancel',
@@ -450,12 +448,12 @@ export class GrandLevelSelection {
         }else{
           console.log("User data is",data);
           let userData = {
-            user_id:data.user_id
+            user_id:data.user_id,
+            package_id:this.packageIdPasssed
           }
 
           this.loader = this.loadingCtrl.create({
-              content: "Please wait, resetting data",
-              dismissOnPageChange:true
+              content: "Please wait, resetting levels!"
           });
           this.loader.present();
 

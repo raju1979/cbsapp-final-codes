@@ -23,8 +23,16 @@
 
 
 
-  <ion-fab right bottom *ngIf="shouldShowResetBtn()" [@enterAnimation]="allLevelCleared" (click)="resetTest()">
+  <!--<ion-fab right bottom *ngIf="shouldShowResetBtn()" [@enterAnimation]="allLevelCleared" (click)="resetTest()">
     <button ion-fab color="appblue"><ion-icon name="refresh"></ion-icon></button>
-  </ion-fab>
+  </ion-fab>-->
 
 </ion-content>
+
+<ion-footer>
+  <ion-toolbar color="appblue">
+      <button ion-button clear block (click)="resetTest()" color="light">
+        RESET
+      </button>
+  </ion-toolbar>    
+</ion-footer>

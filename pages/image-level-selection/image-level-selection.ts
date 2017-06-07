@@ -61,6 +61,8 @@ export class ImageLevelSelection {
 
     loader:any;
 
+    maximumTimeAvailableForTest:number = 15;//total time availabe for test
+
     constructor(public navCtrl: NavController, public navParams: NavParams, private _userDataService: UserdataService, private _storage: Storage, public platform: Platform, private alertCtrl: AlertController,private loadingCtrl: LoadingController,private _network:Network, private _file:File) {
 
         
@@ -69,7 +71,7 @@ export class ImageLevelSelection {
             this.fs = cordova.file.documentsDirectory;
         }
         else if (this.platform.is('android')) {
-            this.fs = cordova.file.externalRootDirectory;
+            this.fs = cordova.file.dataDirectory;
         }
 
         this.isGuestUser = this.navParams.get('guestUser');
@@ -166,7 +168,7 @@ export class ImageLevelSelection {
             lastQuestionAttempted: 0,
             packageId: this.packageIdPasssed,
             questions: _.shuffle(localQuestionsArray),
-            secondsRemaining: 20,//(responseData.levels[suppliedLevel].timeDuration * 60),
+            secondsRemaining: (responseData.levels[suppliedLevel].timeDuration * 60),
             allLevelCleared: false
         }
         this._userDataService.setImageQuestionDataIndexedDb(this.packageIdPasssed, data);//set data into indexedDb
@@ -179,7 +181,7 @@ export class ImageLevelSelection {
     presentResetTestConfirm() {
         let alert = this.alertCtrl.create({
             title: 'Reset Test',
-            message: 'Do you want to reset current test and start a new one?',
+            message: 'Do you want to reset the levels. Press OK to reset!',
             buttons: [
                 {
                     text: 'Cancel',
@@ -203,7 +205,7 @@ export class ImageLevelSelection {
         this.loader.dismiss();
         let alert = this.alertCtrl.create({
             title: 'Not Online!',
-            subTitle: 'we are unable to fetch you online questions. Please connect to the Internet and restart the app!',
+            subTitle: 'We are unable to fetch questions. Please check your internet connection!',
             buttons: ['OK']
         });
         alert.present();
@@ -214,18 +216,23 @@ export class ImageLevelSelection {
         let errorMsg: any = JSON.stringify(err);
         let alert = this.alertCtrl.create({
             title: 'Error!',
-            subTitle: `There is some problem at server. Please check your network connection and Restart the App!<br />${errorMsg}`,
+            subTitle: `There is some problem at server. Please check your network connection!`,
             buttons: ['OK']
         });
         alert.present();
     };//
 
     navigateToImageTestScreen(): void {
-        if (this.previousTestExists) {
-            this.navCtrl.push(ImageQuestionsPage, { id: this.packageIdPasssed,guestUser:this.isGuestUser});
-        } else {
-            this.createNewImageTest(0);
+        if(this.allLevelCleared){
+            this.showAllLevelAlreadyClearedAlert();
+        }else{
+            if (this.previousTestExists) {
+                this.navCtrl.push(ImageQuestionsPage, { id: this.packageIdPasssed,guestUser:this.isGuestUser});
+            } else {
+                this.createNewImageTest(0);
+            }
         }
+        
 
     };//
 
@@ -242,6 +249,15 @@ export class ImageLevelSelection {
         }else{
             return false;
         }
-    }
+    };//
+
+    showAllLevelAlreadyClearedAlert(): void {
+        let alert = this.alertCtrl.create({
+        title: 'Highest Level Reached!',
+        subTitle: 'You have already reached highest level, press Reset button to practice test from Level 1',
+        buttons: ['OK']
+        });
+        alert.present();
+    };//end showError
 
 }

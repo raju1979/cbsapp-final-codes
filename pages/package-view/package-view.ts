@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams, Platform } from 'ionic-angular';
+import { NavController, NavParams, Platform ,AlertController, ToastController, LoadingController,} from 'ionic-angular';
 
 import { UserdataService } from "../../services/userdata-service";
 import { CompleteView } from '../complete-view/complete-view';
 import { GuestDownloadedPackageView } from '../guest-downloaded-package-view/guest-downloaded-package-view';
 import { DownloadedPackageView } from '../downloaded-package-view/downloaded-package-view';
+
+import { Network } from '@ionic-native/network';
 /*
   Generated class for the PackageView page.
 
@@ -26,7 +28,10 @@ export class PackageView {
   baseUrlPackage: any;
   hideBuyBtn: any = true;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private _userDataService: UserdataService, private _platfrom: Platform) {
+  loaderVisible:boolean = false;
+  loader:any;
+
+  constructor(public navCtrl: NavController, public navParams: NavParams, private _userDataService: UserdataService, private _platfrom: Platform, private _network:Network, private alertCtrl:AlertController, private _loadingController: LoadingController) {
     this.parsedpackageData = this.navParams.get('data');
     this.isGuestUser = this.navParams.get('guestUser') == 'no' ? false : true;
     console.log(this.parsedpackageData,this.isGuestUser);
@@ -48,10 +53,15 @@ export class PackageView {
     //     (data) => this.populatePackageData(data),
     //     (err) => console.log(err)
     // )
-    this._userDataService.getPackageDesciption(this.parsedpackageData.id).subscribe(
-      (data: any) => this.populatePackageData(data),
-      (error) => console.log(error)
-    )
+    if(this._platfrom.is('mobile') && this._network.type == 'none'){
+      this.showNoNetworkAlert();
+    }else{
+      this._userDataService.getPackageDesciption(this.parsedpackageData.id).subscribe(
+        (data: any) => this.populatePackageData(data),
+        (error) => console.log(error)
+      )
+    }
+    
   };//
 
   populatePackageData(data: any) {
@@ -85,17 +95,55 @@ export class PackageView {
   };//
 
   gotoDownloadedPackageViewAsGuest(packageData: any) {
-    this.navCtrl.push(GuestDownloadedPackageView, {
-      data: packageData,
-      guestUser:'yes'
-    })
+    if(this._platfrom.is('mobile') && this._network.type == 'none'){
+      this.showNoNetworkAlert();
+    }else{
+      this.navCtrl.push(GuestDownloadedPackageView, {
+        data: packageData,
+        guestUser:'yes'
+      })
+    }    
   };//
 
   gotoDownloadedPackageViewAsPrivilegedUser(packageData: any) {
-    this.navCtrl.push(DownloadedPackageView, {
-      data: packageData,
-      guestUser:'no'
-    })
+    if(this._platfrom.is('mobile') && this._network.type == 'none'){
+      this.showNoNetworkAlert();
+    }else{
+      this.navCtrl.push(DownloadedPackageView, {
+        data: packageData,
+        guestUser:'no'
+      })
+    }    
   };//
+
+   showNoNetworkAlert(): void {
+    if(this.loaderVisible){
+      this.loader.dismiss();
+    }        
+    let alert = this.alertCtrl.create({
+      title: 'Not Online!',
+      subTitle: 'Please check your internet connection!',
+      buttons: ['OK']
+    });
+    alert.present();
+  };//
+
+  showDataFetchErrorFromServer(): void {
+    // if(this.loaderVisible){
+    //   this.loader.dismiss();
+    // } 
+    // let alert = this.alertCtrl.create({
+    //   title: 'Error!',
+    //   subTitle: `There is some problem at server. Please check your network connection!`,
+    //   buttons: ['OK']
+    // });
+    // alert.present();
+  };//
+
+  gotoPurchaseUrl(){
+    console.log(this.packageDescription)
+    window.open(`${this.packageDescription.purchaseLink}`, '_system', 'location=yes'); 
+    return false;
+  }
 
 }

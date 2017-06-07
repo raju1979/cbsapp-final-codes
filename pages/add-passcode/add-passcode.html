@@ -13,10 +13,10 @@
 
 
 <ion-content padding class="addPasscodePage">
-  <h3>Enter the Package Id &amp; Unique Key what you got free with book purchase*</h3>
+  <h3>Enter Book Code and Passcode</h3>
 
   <div class="addPasscodeInput">
-    <input type="text" placeholder="Enter Package Id" [(ngModel)]="passCodeText" />
+    <input type="text" placeholder="Enter Book Code" [(ngModel)]="passCodeText" />
     <!--<span class="iconContainer">
         <ion-spinner color="appblue" *ngIf="passCodeText"></ion-spinner>
     </span>-->
@@ -25,7 +25,7 @@
     <p>{{passcodeError}}</p>
   </div>
   <div class="addPasscodeInput">
-    <input type="text" placeholder="Enter Unique Id" [(ngModel)]="uniqueKeyText"  />
+    <input type="text" placeholder="Enter Pass Code" [(ngModel)]="uniqueKeyText"  />
     <!--<span class="iconContainer">
         <ion-spinner color="appblue" *ngIf="uniqueKeyText"></ion-spinner>
     </span>-->
@@ -53,11 +53,11 @@
   <div id="existingPasscodesContainer">
     <ion-card>
       <ion-card-header>
-        Existing Passcodes
+        <p>Already Purchased</p>
       </ion-card-header>
       <ion-list>
         <ion-item *ngFor="let package of existingPackagesList">
-          {{package.original_title}} <span class="uniqueId">{{package.unique_id}}</span>
+          {{package.original_title}}
         </ion-item>
       </ion-list>
     </ion-card>

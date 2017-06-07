@@ -1,0 +1,126 @@
+page-book-additional-viewer {
+
+    ion-content{
+        overflow: hidden;
+    }
+
+    #mainContainer{
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        position: relative;
+    }
+
+    div#textContainer{
+        position: absolute;
+        left: 45%;
+        font-size: 2vw;
+    }
+
+    #imagesOuterContainer{
+        width: 100%;
+        height: 100%;
+        background: rgba(10,20,55,.5);
+        overflow-x: hidden;
+        overflow-y: scroll;
+    }
+
+    .imagesContainer{
+        margin-bottom: 10px;
+        box-shadow: 0px 5px 5px #888888;
+    }
+
+    #imagesZoomContainer{
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: 100;
+        background: rgba(50,55,55,.5);
+        display: flex;
+        flex-direction: column;
+    }
+
+    ion-scroll{
+        height: 100%;
+    }
+
+    ion-scroll { white-space: nowrap; }
+
+    .zoomedImage{
+        transform-origin:0 0;
+        transform:scale(1.5);
+        transition:all 1s ease-in;
+    }
+
+    #closeBtnContainer{
+        width: 100%;
+        height: 50px;
+        background: color($colors, appblue)
+    }
+
+    div#imageSliderOuterContainer{
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    div#imageContainer{
+        flex:1;
+        flex-shrink: 0;
+        background-position:center;
+        background-size: cover;
+        overflow-x: auto;
+        overflow-y: auto;
+        width: 100%;
+        height: 100%;
+    }
+
+    div#controlsContainer{
+        height: 50px;
+        width: 100%;
+        background: rgba(255,205,210,.8);
+        display: flex;
+    }
+
+    div.buttonControlsContainer{
+        height: 100%;
+        width: 25%;
+        box-sizing: border-box;
+        border: 1px solid #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        
+    }
+
+    .largeIcon{
+        font-size: 3.2rem;
+    }
+
+    .sliderImg{
+        max-height: 100% !important;
+        width: auto !important;
+    }
+
+    .scrollable{
+        overflow-x: scroll !important;
+    }
+
+    .loadingImg{
+        width:200px !important;
+        height: auto;
+    }
+
+    #zoomedImageContainer{
+        flex:1;
+        flex-shrink: 0;
+        background: #fff;
+        // overflow: auto;
+        width: 100%;
+        height: 100%;
+    }
+}

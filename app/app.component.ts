@@ -21,6 +21,7 @@ import { SQLite, SQLiteObject } from '@ionic-native/sqlite';
 import { File } from '@ionic-native/file';
 
 import { Storage } from '@ionic/storage';
+import { AboutUs } from '../pages/about-us/about-us';
 
 declare var cordova: any;
 declare var localStorageDB: any;
@@ -77,7 +78,7 @@ export class MyApp {
         this.fs = cordova.file.documentsDirectory;
       }
       else if (this.platform.is('android')) {
-        this.fs = cordova.file.externalRootDirectory;
+        this.fs = cordova.file.dataDirectory;
         this.showAddPassCodePage = true;
       }
     });
@@ -258,7 +259,7 @@ export class MyApp {
                 })
                 .catch(err => console.log('Directory doesnt exist'));              
             }//end if
-            localStorage.removeItem("user_master");
+            //localStorage.removeItem("user_master");
             this._storage.clear();//clear the indexedDb HOT
             setTimeout(() => {
               this.menu.close();
@@ -303,5 +304,9 @@ export class MyApp {
   navigateToNotifications(){
     this.menu.close();
     this.nav.push(NotificationsPage);
+  }
+  navigateToAboutUs(){
+    this.menu.close();
+    this.nav.push(AboutUs);
   }
 };//end class

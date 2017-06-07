@@ -1,6 +1,6 @@
 <ion-header>
   <ion-navbar color="appblue" align-title="center">
-    <ion-title align="center">Feedback</ion-title>
+    <ion-title align="center">Feedback For CBS Exam Books and App</ion-title>
     <ion-buttons end>
       <button ion-button icon-only>
                 <ion-icon name=""></ion-icon>
@@ -44,21 +44,21 @@
       </div>
       <div class="feedbackQue">
         <ion-list>
-          <p>Coverage of practice questions </p>
+          <p>Coverage of Content (Theory + MCQs) </p>
           <ion-item>
             <ion-range min="1" max="3" step="1" snaps="true" pin="true" color="appblue" [(ngModel)]="feedBackValue1">
               <ion-label range-left>1</ion-label>
               <ion-label range-right>3</ion-label>
             </ion-range>
           </ion-item>
-          <p>Live Lecture </p>
+          <p>Presentation of the Book </p>
           <ion-item>
             <ion-range min="1" max="3" step="1" snaps="true" pin="true" color="appblue" [(ngModel)]="feedBackValue2">
               <ion-label range-left>1</ion-label>
               <ion-label range-right>3</ion-label>
             </ion-range>
           </ion-item>
-          <p>Approach of Book(Theory &amp; PBQ's)</p>
+          <p>Quality of CBS Exam Book App</p>
           <ion-item>
             <ion-range min="1" max="3" step="1" snaps="true" pin="true" color="appblue" [(ngModel)]="feedBackValue3">
               <ion-label range-left>1</ion-label>
@@ -66,14 +66,14 @@
             </ion-range>
           </ion-item>
           <ion-item>
-            <ion-label>Value For Money <span class="toggleText">{{feedBackValue4 ? 'Yes' : 'No'}}</span></ion-label>
+            <ion-label>Worth Reading <span class="toggleText">{{feedBackValue4 ? 'Yes' : 'No'}}</span></ion-label>
             <ion-toggle [(ngModel)]="feedBackValue4" color="appblue"></ion-toggle>
           </ion-item>
           <ion-item>
-            <ion-label>Recommend this book <span class="toggleText">{{feedBackValue5 ? 'Yes' : 'No'}}</span></ion-label>
+            <ion-label>Will you recommend this book to your colleagues / juniors <span class="toggleText">{{feedBackValue5 ? 'Yes' : 'No'}}</span></ion-label>
             <ion-toggle [(ngModel)]="feedBackValue5" color="appblue"></ion-toggle>
           </ion-item>
-          <p>Any other feedback you like to share? </p>
+          <p>Any suggestions/feedback for the improvement of Book or APP, kindly mention </p>
           <ion-item>
             <ion-textarea [(ngModel)]="feedbackSuggestion"></ion-textarea>
           </ion-item>

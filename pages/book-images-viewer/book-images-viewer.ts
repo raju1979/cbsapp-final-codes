@@ -141,12 +141,13 @@ export class BookImagesViewer {
   };//
 
   incrementCurrentImageIndex(){
+    console.log(this.currentImageIndex)
     this.shouldZoomImage = false;
-    if(this.currentImageIndex >= this.bookImagesArray.length){
+    if(this.currentImageIndex+1 == this.bookImagesArray.length){
 
     }else{
       this.imageFullyLoaded = false;
-      this.currentImageIndex++;
+      ++this.currentImageIndex;
     }
   };//
 
@@ -156,7 +157,7 @@ export class BookImagesViewer {
 
     }else{
       this.imageFullyLoaded = false;
-      this.currentImageIndex--;
+      --this.currentImageIndex;
     }
   };//
 

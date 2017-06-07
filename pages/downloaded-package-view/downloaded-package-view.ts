@@ -18,6 +18,7 @@ import { MegaLevelSelection } from "../mega-level-selection/mega-level-selection
 import { DownloadPopover } from '../download-popover/download-popover';
 
 import { BookImagesViewer } from '../book-images-viewer/book-images-viewer';
+import { BookAdditionalViewer } from '../book-additional-viewer/book-additional-viewer';
 
 import { UserdataService } from "../../services/userdata-service";
 
@@ -25,6 +26,7 @@ import * as lodash from 'lodash';
 declare var _:any;
 
 declare var cordova: any;
+declare var moment: any;
 
 
 @Component({
@@ -83,6 +85,9 @@ export class DownloadedPackageView {
     pkgLevelObj:Array<any> = [];
     userPurchasedPackages:any;
 
+    myDate: any = new Date();
+    analyticsData: any;
+
     constructor(public navCtrl: NavController, public navParams: NavParams, private _userDataService: UserdataService, private _storage: Storage, public platform: Platform, private alertCtrl: AlertController, private _modalCtrl: ModalController,private _network:Network, private _file:File) {
 
         this.passedPackage = this.navParams.get('data');
@@ -126,7 +131,7 @@ export class DownloadedPackageView {
             this.fs = cordova.file.documentsDirectory;
         }
         else if (this.platform.is('android')) {
-            this.fs = cordova.file.externalRootDirectory;
+            this.fs = cordova.file.dataDirectory;
         }
 
 
@@ -160,7 +165,47 @@ export class DownloadedPackageView {
                     console.log(data);
                     this.userData = data.user_id;
                 }
+            })//
+
+        this._storage.ready()
+            .then((data) => {
+                this._storage.get("user_master")
+                    .then((data) => {
+                        if (data == null) {
+
+                        } else {
+                            var newDate = moment().format('YYYY-MM-DD');
+                            this.analyticsData = {
+                                currentDate: newDate,
+                                user_id: data.user_id
+                            }
+                            console.log(this.analyticsData);
+                            this._userDataService.getAnalyticsData(this.analyticsData)
+                                .subscribe((response: any) => {
+                                    let status = response.status;
+                                    let data = response._body;
+                                    console.log(status, data);
+                                    if (data == '0 results') {
+                                        this._userDataService.sendAnalyticsData(this.analyticsData)
+                                            .subscribe((data: any) => console.log(data)
+                                        );
+                                    } else {
+                                        console.log('You Visited today')
+                                    }
+                                }
+                                );
+
+                        }
+                    })
+                    .catch((err) => {
+                        console.log(JSON.stringify(err));
+                    })
             })
+            .catch((err) => {
+                console.log(JSON.stringify(err));
+            });    
+
+
     };//end ionViewDidLoad
 
 
@@ -176,10 +221,15 @@ export class DownloadedPackageView {
         if (this.isGuestUser) {
             this.showToastIfGuestUser();
         } else {
-            this.navCtrl.push(VideoPopover, { videoUrl: videoUrlText })
+            if (this.platform.is("mobile") && this._network.type == "none") {//if offline on mobile
+                this.showNoNetworkAlert();
+            }else{
+                this.navCtrl.push(VideoPopover, { videoUrl: videoUrlText })
+            }
+            
         }
 
-    }
+    };//
 
 
     // ngOnInit() {
@@ -249,7 +299,7 @@ export class DownloadedPackageView {
 
     //check if folder cbsapp/packageId exists
     checkPackageFolder() {
-        //this.fs = cordova.file.externalRootDirectory;
+        //this.fs = cordova.file.dataDirectory;
         this._file.checkDir(this.fs, this.mainDirectoryName + "/" + this.passedPackage.id).
             then(_ => this.packageDirectoryFound())
             .catch(err => console.log(err));
@@ -286,7 +336,7 @@ export class DownloadedPackageView {
     showNoNetworkAlert(): void {
         let alert = this.alertCtrl.create({
             title: 'Not Online!',
-            subTitle: 'we are unable to fetch you online questions. Please connect to the Internet and restart the app!',
+            subTitle: 'Please check your internet connection!',
             buttons: ['OK']
         });
         alert.present();
@@ -297,7 +347,7 @@ export class DownloadedPackageView {
         let errorMsg: any = JSON.stringify(err);
         let alert = this.alertCtrl.create({
             title: 'Error!',
-            subTitle: `There is some problem at server. Please check your network connection and Restart the App!<br />${errorMsg}`,
+            subTitle: `There is some problem at server. Please check your network connection!`,
             buttons: ['OK']
         });
         alert.present();
@@ -505,12 +555,22 @@ export class DownloadedPackageView {
      */
     showMainBookImages() {
         console.log(this.tocJsonData);
-        this.navCtrl.push(BookImagesViewer, { data: this.tocJsonData, mainReading: true })
+        if (this.platform.is("mobile") && this._network.type == "none") {//if offline on mobile
+            this.showNoNetworkAlert();
+        }else{
+            this.navCtrl.push(BookImagesViewer, { data: this.tocJsonData, mainReading: true })
+        }
+        
     }//
 
-    showAdditionalBookImages() {
-        console.log(this.tocJsonData);
-        this.navCtrl.push(BookImagesViewer, { data: this.tocJsonData, mainReading: false })
+    showAdditionalBookImages(newdata:any, bookPath:any) {
+        console.log(newdata);
+        if (this.platform.is("mobile") && this._network.type == "none") {//if offline on mobile
+            this.showNoNetworkAlert();
+        }else{
+            this.navCtrl.push(BookAdditionalViewer, { package_id: this.tocJsonData.id,additionalImages: newdata, bookPath: bookPath, mainReading: false });
+        }
+        
     }
 
     showToastIfGuestUser() {
@@ -532,7 +592,20 @@ export class DownloadedPackageView {
     }
 
     navigatToMegaLevelSelection(): void {
-        this.navCtrl.push(MegaLevelSelection, { id: this.packageIdPasssed, guestUser: this.isGuestUser });
-    }
+        if(this.tocJsonData.megaTestAvailable == "yes"){
+            this.navCtrl.push(MegaLevelSelection, { id: this.packageIdPasssed, guestUser: this.isGuestUser });
+        }else{
+            this.showAlertIfMegaTestUnavilable();
+        }
+        
+    };//
+
+    showAlertIfMegaTestUnavilable() {
+        let alert = this.alertCtrl.create({
+            title: 'Coming Soon!',
+            subTitle: `Mega Grand Test will be available soon.`,
+            buttons: ['OK']
+        });alert.present();
+    };//
 
 };//end class

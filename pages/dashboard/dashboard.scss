@@ -4,6 +4,11 @@ page-dashboard {
         font-family: "Arsenal", sans-serif !important;
         width: 100%;
         float: left; 
+        text-align: center;
+    }
+    .dashboardData h3
+    {
+        font-size: 1em;
     }
     .dashboardData ul
     {
@@ -39,4 +44,65 @@ page-dashboard {
     .levelClearText{
         color:color($colors,warning);
     }
+    .dashboardActionBtns
+    {
+        text-align: center;
+        // display: flex;
+        // justify-content: space-between;
+    }
+    .dashboardActionBtns button
+    {
+        // flex: 1;
+        width: 100%;
+        font-weight: bold;
+    }
+    .dashboardPopUp
+    {
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: #fff;
+        display: flex;
+        flex-direction: column;
+    }
+    .dashboardPopUpData
+    {
+        flex: 1;
+    }
+    .dashboardPopUpData h4{
+        text-align: center;
+        width: 100%;
+        padding: 10px 0;
+        margin-bottom: 0;
+    }
+    .dashboardPopUpClose
+    {
+        height: 62px;
+         
+        background-color: color($colors, appblue);
+    }
+    .dashboardPopUpData table {
+        *border-collapse: collapse; /* IE7 and lower */
+        border-spacing: 0;
+        width: 100%;
+        text-align: center;
+    } 
+    th {
+        background: #F3F3F3; /* Light grey background */
+        font-weight: bold; /* Make sure they're bold */
+        border: 1px solid #CCC;
+        padding: 10px 0;
+        font-size:1.3em;
+    }
+
+    td {
+        background: #FAFAFA; /* Lighter grey background */
+        text-align: center; /* Center our text */
+        border: 1px solid #CCC;
+        padding: 10px 0;
+        font-size:1.1em;
+    }
+
 }

@@ -1,5 +1,5 @@
-import { Component, trigger, transition, style, animate } from '@angular/core';
-import { NavController, NavParams, ToastController, ModalController, Platform, FabContainer, AlertController } from 'ionic-angular';
+import { Component, trigger, transition, style, animate,ViewChild,ElementRef } from '@angular/core';
+import { Content,NavController, NavParams, ToastController, ModalController, Platform, FabContainer, AlertController } from 'ionic-angular';
 import { DomSanitizer, SafeResourceUrl, SafeUrl, SafeHtml } from "@angular/platform-browser";
 
 import { ShowImagequestionStat } from '../show-imagequestion-stat/show-imagequestion-stat';
@@ -17,6 +17,7 @@ import { FormatTime } from "../pipes/formattime.pipe";
 
 declare var _: any;
 declare var moment: any;
+
 
 /*
   Generated class for the ImageQuestions page.
@@ -57,7 +58,10 @@ declare var cordova: any;
 
 export class ImageQuestionsPage {
 
+  @ViewChild(Content) content: Content;
 
+  @ViewChild('resultViewContainer') private resultViewContainer : ElementRef;
+  private scrollElement; 
 
   chapterData: any;
   questionsArray: any = [];
@@ -92,7 +96,7 @@ export class ImageQuestionsPage {
   testRunning: boolean = false;
   allLevelCleared: boolean = false;
 
-  readonly passingMarks: number = 1;//this should be 80
+  readonly passingMarks: number = 80;//this should be 80
 
   readonly maxLevelInthisTestCategory: number = 1;
 
@@ -101,13 +105,16 @@ export class ImageQuestionsPage {
 
   isGuestUser: boolean = false;
 
+  showPopoverDiv:boolean = false;
+  resultObject:any = {};
+
   constructor(public navCtrl: NavController, public navParams: NavParams, private _userDataService: UserdataService, private _storage: Storage, private _sanitizer: DomSanitizer, private _toastCtrl: ToastController, private _modalCtrl: ModalController, public platform: Platform, private alertCtrl: AlertController,private _network:Network, private _file:File) {
 
     if (this.platform.is('ios')) {
       this.fs = cordova.file.documentsDirectory;
     }
     else if (this.platform.is('android')) {
-      this.fs = cordova.file.externalRootDirectory;
+      this.fs = cordova.file.dataDirectory;
     }
 
 
@@ -302,16 +309,17 @@ export class ImageQuestionsPage {
       allLevelCleared: this.allLevelCleared
     };
 
-    this._userDataService.setQuestionDataIndexedDb("image_" + this.savedPackageData.packageId, data);//set data into indexedDb
-  };//end setQuestionsDataToLocalStorage
+    //this._userDataService.setQuestionDataIndexedDb("image_" + this.savedPackageData.packageId, data);//set data into indexedDb
+    this._userDataService.setImageQuestionDataIndexedDb(this.passedId, data);
+};//end setQuestionsDataToLocalStorage
 
   sanitizeJson(string: string): SafeHtml {
     return this._sanitizer.bypassSecurityTrustHtml(string);
   }
 
-  showStats(fab: FabContainer): void {
-    fab.close();
-    this.presentGridModal()
+  showStats(): void {
+    this.testRunning = false;
+    this.presentGridModal();
     //this.navCtrl.push(ShowQuestionStats);
   }
 
@@ -464,7 +472,8 @@ export class ImageQuestionsPage {
     } else if (this.secondsRemaining <= 0) {
       this.testRunning = false;
       console.log('time over');
-      this.showTimeoverAlert();
+      this.showResultPopover();
+      //this.showTimeoverAlert();
     }
   };//
 
@@ -476,7 +485,7 @@ export class ImageQuestionsPage {
     this.setQuestionsDataToIndexedDB();
   };//
 
-  submitCurrentLevelTest(fab: FabContainer) {
+  submitCurrentLevelTest() {
     let percentMarks = Math.floor((this.totalCorrectAnswers / this.questionSetChosen.length) * 100);
     if (percentMarks >= this.passingMarks) {
       console.log('Hurray, test cleared');
@@ -492,14 +501,14 @@ export class ImageQuestionsPage {
 
     }
     console.log(percentMarks)
-    fab.close();
+    //fab.close();
   };//
 
 
   showNoNetworkAlert(): void {
     let alert = this.alertCtrl.create({
       title: 'Not Online!',
-      subTitle: 'we are unable to fetch you online questions. Please connect to the Internet and restart the app!',
+      subTitle: 'We are unable to fetch questions. Please check your internet connection!',
       buttons: ['OK']
     });
     alert.present();
@@ -509,7 +518,7 @@ export class ImageQuestionsPage {
     let errorMsg: any = JSON.stringify(err);
     let alert = this.alertCtrl.create({
       title: 'Error!',
-      subTitle: `There is some problem at server. Please check your network connection and Restart the App!<br />${errorMsg}`,
+      subTitle: `There is some problem at server. Please check your network connection!`,
       buttons: ['OK']
     });
     alert.present();
@@ -517,7 +526,7 @@ export class ImageQuestionsPage {
 
   showTimeoverAlert(): void {
     let alert = this.alertCtrl.create({
-      title: 'TImes Up!',
+      title: 'Times Up',
       subTitle: 'Your time is up. Please press submit button.!',
       buttons: ['OK']
     });
@@ -527,16 +536,17 @@ export class ImageQuestionsPage {
   showTimeResetAlert(): void {
     let alert = this.alertCtrl.create({
       title: 'Restart the level!',
-      subTitle: 'Since you have consumed all the allocated time and your level is not cleared. You need to restart this level!',
-      buttons: [
-        {
-          text: 'OK',
-          handler: (data: any) => {
-            console.log('btn clicked');
-            this.navCtrl.pop();
+      subTitle: 'Since your level is not cleared. You need to restart this level!',
+      buttons: [{
+        text: 'OK',
+          handler: data => {
+            //this.setQuestionsDataToIndexedDB();
+            setTimeout(() => {
+              this.navCtrl.pop();
+            },500)
+            
           }
-        }
-      ]
+      }]
     });
     alert.present();
   };//
@@ -576,19 +586,35 @@ export class ImageQuestionsPage {
       //stop the test
       this.testRunning = false;
       this.getSavedAllImageAllPackageFromIndexedDb(this.currentLevel + 1);
-      this.showLevelClearedAlert();
+      setTimeout(() => {
+        console.log("going back")
+        this.navCtrl.pop();
+      },1000)
+      
+      //this.showLevelClearedAlert();
     }
   };//
 
   showMaxLevelReachAlert(): void {
-    let alert = this.alertCtrl.create({
-      title: 'All Level Cleared!',
-      subTitle: 'You have cleared all levels for Image Based Questions, Please press Back Button!',
-      buttons: ['OK']
-    });
     this.allLevelCleared = true;
     this.setQuestionsDataToIndexedDB();
-    alert.present();
+    setTimeout(() => {
+      this.navCtrl.pop();
+    },500)    
+    // let alert = this.alertCtrl.create({
+    //   title: 'All Levels Cleared!',
+    //   subTitle: 'You have cleared all levels for Image Based Questions!',
+    //   buttons: [{
+    //     text: 'OK',
+    //       handler: data => {
+    //         console.log('Cancel clicked');
+    //         this.navCtrl.pop();
+    //       }
+    //   }]
+    // });
+    // this.allLevelCleared = true;
+    // this.setQuestionsDataToIndexedDB();
+    // alert.present();
   };//end showMaxLevelReachAlert
 
   getSavedAllImageAllPackageFromIndexedDb(newLevel: number) {
@@ -617,7 +643,7 @@ export class ImageQuestionsPage {
       lastQuestionAttempted: 0,
       packageId: this.passedId,
       questions: _.shuffle(responseData[suppliedLevel].data),
-      secondsRemaining: 20,//(responseData[suppliedLevel].timeDuration * 60),
+      secondsRemaining: (responseData[suppliedLevel].timeDuration * 60),
       allLevelCleared: this.allLevelCleared
     }
     console.log(data);
@@ -638,23 +664,186 @@ export class ImageQuestionsPage {
       } else {
         allImagesPackage = val.levels;
         responseData = allImagesPackage;
+
+        //reset all answers given by user
+        _.forEach(responseData.questions,(value,index) => {
+          value.questiondata.isAnswered = "no",
+          value.questiondata.isFlagged = "false",
+          value.questiondata.userChoice = "Z",
+          value.questiondata.isCorrect = "NA"
+        });
+
         data = {
           level: suppliedLevel,
           lastQuestionAttempted: 0,
           packageId: this.passedId,
           questions: _.shuffle(responseData[suppliedLevel].data),
-          secondsRemaining: 20,//(responseData[suppliedLevel].timeDuration * 60),
+          secondsRemaining: (responseData[suppliedLevel].timeDuration * 60),
           allLevelCleared: this.allLevelCleared
         }
         console.log(data);
         this._userDataService.setImageQuestionDataIndexedDb(this.passedId, data);//set data int
         setTimeout(() => {
-          this.showTimeResetAlert();
+          this.navCtrl.pop();
+          //this.showTimeResetAlert();
         },500)
     }
 
     });
 
+  };//
+
+  checkMyProgress() {
+
+    //pause the test
+    this.testRunning = false;
+    this.setQuestionsDataToIndexedDB();
+    this.showFinishTestAlert();
+
+  };//checkMyProgress
+
+  showFinishTestAlert() {
+    let alert = this.alertCtrl.create({
+      title: 'Finish Test',
+      message: 'Do you want to finish this test?',
+      enableBackdropDismiss:false,
+      buttons: [
+        {
+          text: 'No',
+          role: 'cancel',
+          handler: () => {
+            console.log('no')
+            this.testRunning = true;
+            this.updateTimer();//restart the Timer
+          }
+        },
+        {
+          text: 'Yes',
+          handler: () => {
+            
+            this.showResultPopover();
+          }
+        }
+      ]
+    });
+    alert.present();
+  };//
+
+  showResultPopover(){
+
+    this.secondsRemaining = 0;
+    this.setQuestionsDataToIndexedDB();
+    console.log(this.totalCorrectAnswers,this.questionSetChosen.length)
+    let percentMarks = Math.floor((this.totalCorrectAnswers / this.questionSetChosen.length) * 100);
+    this.resultObject.totalQuestions = this.questionSetChosen.length;
+    this.resultObject.skippedQuestions = 0;
+    this.resultObject.totalCorrectAnswers = 0;
+    this.resultObject.totalWrongAnswers = 0;
+    //this.resultObject.percentMarks = percentMarks;
+    _.forEach(this.questionSetChosen,(value,index) => {
+      if(value.questiondata.isAnswered == "no"){
+        this.resultObject.skippedQuestions++;
+      }else{
+        if(value.questiondata.isCorrect == true){
+          this.resultObject.totalCorrectAnswers++;
+          this.resultObject.percentMarks = Math.floor((this.resultObject.totalCorrectAnswers / this.questionSetChosen.length) * 100);
+        }else{
+          this.resultObject.totalWrongAnswers++;
+        }
+      }
+    })
+    setTimeout(() => {
+      this.showPopoverDiv = true;
+      // You should resize the content to use the space left by the navbar
+      this.content.resize();
+    },500);
+
+  };//end showResultPopover
+
+  closeResultPopover(){
+    console.log('seconds remaining', this.secondsRemaining);
+    this.closeResultPopoverAndResize();
+    this.submitCurrentLevelTest();    
+
+  };//closeResultPopover
+
+  closeResultPopoverAndResize(){
+      this.showPopoverDiv = false;
+      // You should resize the content to use the space left by the navbar
+      this.content.resize();
+  }
+
+  scrollResultViewContainerToTop(){
+    this.resultViewContainer.nativeElement.scrollTop = 0;
+  }
+
+  getResultObject(){
+    _.forEach(this.questionSetChosen,(vlaue,index) => {
+
+    });//end _.forEach
+  }
+
+  getUserSelectedAnswer(question:any):string{
+    let userSelectedAnswer:string = '';
+    if(question.questiondata.userChoice == 'Z'){
+      userSelectedAnswer = "Not Answered";
+    }else{
+      userSelectedAnswer = question.optiondata.options[question.questiondata.userChoice].optiontext;
+    }
+    return userSelectedAnswer
+  };//
+
+  presentContinueTestChoiceAlert() {
+    let alert = this.alertCtrl.create({
+      title: 'Your level is cleared.',
+      message: 'Do you want to goto next level?',
+      buttons: [
+        {
+          text: 'Continue Test',
+          role: 'cancel',
+          handler: () => {
+            this.closeResultPopoverAndResize();
+          }
+        },
+        {
+          text: 'Upgrade Level',
+          handler: () => {
+            this.closeResultPopoverAndResize();
+            this.clearLevelAndUpgrade();
+          }
+        }
+      ]
+    });
+    alert.present();
+  };//
+
+  isAnswerCorrect(question:any){
+    let isAnswerCorrect:string = '';
+    if(question.questiondata.isCorrect == 'NA'){
+      isAnswerCorrect = "";
+    }else if(question.questiondata.isCorrect == true){
+      isAnswerCorrect = 'Correct';
+    }else{
+      isAnswerCorrect = 'Incorrect';
+    }
+    return isAnswerCorrect;
+  };//
+
+  setAnswerColor(question:any):string{
+    let answerColor:string = '';
+    if(question.questiondata.isCorrect == 'NA'){
+      answerColor = "";
+    }else if(question.questiondata.isCorrect == true){
+      answerColor = 'secondary';
+    }else{
+      answerColor = 'danger';
+    }
+    return answerColor;
+  };//
+
+
+  gotoPreviousScreen(){
+    this.navCtrl.pop();
   }
 
 

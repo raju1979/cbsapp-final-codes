@@ -94,7 +94,7 @@ export class GrandQuestions {
 
   isGuestUser:boolean = false;
 
-  readonly passingMarks: number = 5;//this should be 80
+  readonly passingMarks: number = 80;//this should be 80
 
   readonly maxLevelInthisTestCategory: number = 4;//maximum 5 levels in grand test
 
@@ -115,13 +115,16 @@ export class GrandQuestions {
 
   resultObject:any = {};//it will hold result like totalCorrect etc
 
+  questionModuleName:string = "grand";
+  capitalizeFirstCharOfQuestonModuleName = this.questionModuleName.charAt(0).toUpperCase() + this.questionModuleName.slice(1).toLowerCase();
+
   constructor(public navCtrl: NavController, public navParams: NavParams, private _userDataService: UserdataService, private _storage: Storage, private _sanitizer: DomSanitizer, private _toastCtrl: ToastController, private _modalCtrl: ModalController, public platform: Platform, private alertCtrl: AlertController,private loadingCtrl: LoadingController,private _network:Network, private _file:File,private _viewCtrl: ViewController) {
 
     if (this.platform.is('ios')) {
       this.fs = cordova.file.documentsDirectory;
     }
     else if (this.platform.is('android')) {
-      this.fs = cordova.file.externalRootDirectory;
+      this.fs = cordova.file.dataDirectory;
     }
 
     this.loader = this.loadingCtrl.create({
@@ -163,7 +166,7 @@ export class GrandQuestions {
 
   ionViewDidEnter() {
     //  get a key/value pair based upon passed package id and retreived from indexedDb
-    this._storage.get("grand_" + this.passedId).then((val) => {
+    this._storage.get(`${this.questionModuleName}_` + this.passedId).then((val) => {
       this.savedPackageData = val;
       this.currentQuestion = this.savedPackageData.lastQuestionAttempted;
       this.secondsRemaining = this.savedPackageData.secondsRemaining;
@@ -182,7 +185,7 @@ export class GrandQuestions {
   };//
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad GrandQuestionsPage');
+    console.log(`ionViewDidLoad ${this.questionModuleName}QuestionsPage`);
   }
 
   ionViewWillLeave() {
@@ -331,15 +334,16 @@ export class GrandQuestions {
       allLevelCleared: this.allLevelCleared
     };
 
-    this._userDataService.setQuestionDataIndexedDb("grand_" + this.savedPackageData.packageId, data);//set data into indexedDb
+    this._userDataService.setQuestionDataIndexedDb(`${this.questionModuleName}_` + this.savedPackageData.packageId, data);//set data into indexedDb
   };//end setQuestionsDataToLocalStorage
 
   sanitizeJson(string: string): SafeHtml {
     return this._sanitizer.bypassSecurityTrustHtml(string);
   }
 
-  showStats(fab: FabContainer): void {
-    fab.close();
+  showStats(): void {
+    //fab.close();
+    this.testRunning = false;
     this.presentGridModal()
     //this.navCtrl.push(ShowQuestionStats);
   }
@@ -492,7 +496,14 @@ export class GrandQuestions {
     } else if (this.secondsRemaining <= 0) {
       this.testRunning = false;
       console.log('time over');
-      this.showTimeoverAlert();
+      if(this.platform.is('mobile') && this._network.type == 'none'){
+        this.showNoNetworkAlertOnFinishtest();
+      }else{
+        this.showResultPopover();
+      }
+      
+      //this.showTimeoverAlert();
+
     }
   };//
 
@@ -504,29 +515,32 @@ export class GrandQuestions {
     this.setQuestionsDataToIndexedDB();
   };//
 
-  submitCurrentLevelTest(fab: FabContainer) {
+  submitCurrentLevelTest() {
     let percentMarks = Math.floor((this.totalCorrectAnswers / this.questionSetChosen.length) * 100);
     if (percentMarks >= this.passingMarks) {
       console.log('Hurray, test cleared');
       this.clearLevelAndUpgrade();
     } else {
-      console.log('Sorry, test not cleared, cant continue');
-      if (this.secondsRemaining > 0) {
-        this.showTestNotClearedAlert();
-      }else {
-        console.log("times consumed need to reset");
         this.editImageTestWithResetTimer();
-      }
     }
     console.log(percentMarks)
-    fab.close();
+    //fab.close();
   };//
 
 
   showNoNetworkAlert(): void {
     let alert = this.alertCtrl.create({
       title: 'Not Online!',
-      subTitle: 'we are unable to fetch you online questions. Please connect to the Internet and restart the app!',
+      subTitle: 'We are unable to fetch questions. Please check your internet connection!',
+      buttons: ['OK']
+    });
+    alert.present();
+  };//
+
+  showNoNetworkAlertOnFinishtest(): void {
+    let alert = this.alertCtrl.create({
+      title: 'Not Online!',
+      subTitle: 'To submit the test you need to have active internet connection. Please check your internet connection!',
       buttons: ['OK']
     });
     alert.present();
@@ -537,7 +551,7 @@ export class GrandQuestions {
     let errorMsg: any = JSON.stringify(err);
     let alert = this.alertCtrl.create({
       title: 'Error!',
-      subTitle: `There is some problem at server. Please check your network connection and Restart the App!<br />${errorMsg}`,
+      subTitle: `There is some problem at server. Please check your network connection!`,
       buttons: ['OK']
     });
     alert.present();
@@ -545,7 +559,7 @@ export class GrandQuestions {
 
   showTimeoverAlert(): void {
     let alert = this.alertCtrl.create({
-      title: 'TImes Up!',
+      title: 'Times Up',
       subTitle: 'Your time is up. Please press submit button.!',
       buttons: ['OK']
     });
@@ -555,7 +569,9 @@ export class GrandQuestions {
   showTimeResetAlert(): void {
     let alert = this.alertCtrl.create({
       title: 'Restart the level!',
-      subTitle: 'Since you have consumed all the allocated time and your level is not cleared. You need to restart this level!',
+      subTitle: 'Since your level is not cleared. You need to restart this level!',
+      enableBackdropDismiss:false,
+      cssClass:"fullWhiteAlertController",
       buttons: [
         {
           text: 'OK',
@@ -582,20 +598,22 @@ export class GrandQuestions {
 
   showLevelClearedAlert(): void {
     this.loader.dismiss();
-    let alert = this.alertCtrl.create({
-      title: 'Level Cleared!',
-      subTitle: 'Congratulations, you have cleared this Level!',
-      buttons: [
-        {
-          text: 'OK',
-          handler: (data: any) => {
-            console.log('btn clicked');
-            this.navCtrl.pop();
-          }
-        }
-      ]
-    });
-    alert.present();
+    this.navCtrl.pop();
+    // let alert = this.alertCtrl.create({
+    //   title: 'Level Cleared!',
+    //   subTitle: 'Congratulations, you have cleared this Level!',
+    //   enableBackdropDismiss:false,
+    //   buttons: [
+    //     {
+    //       text: 'OK',
+    //       handler: (data: any) => {
+    //         console.log('btn clicked');
+    //         this.navCtrl.pop();
+    //       }
+    //     }
+    //   ]
+    // });
+    // alert.present();
   };//
 
   clearLevelAndUpgrade(): void {
@@ -623,14 +641,29 @@ export class GrandQuestions {
 
   showMaxLevelReachAlert(): void {
     this.loader.dismiss();
-    let alert = this.alertCtrl.create({
-      title: 'All Level Cleared!',
-      subTitle: 'You have cleared all levels for Image Based Questions, Please press Back Button!',
-      buttons: ['OK']
-    });
     this.allLevelCleared = true;
     this.setQuestionsDataToIndexedDB();
-    alert.present();
+    setTimeout(() => {
+      this.navCtrl.pop();
+    },500)
+    // let alert = this.alertCtrl.create({
+    //   title: 'All Levels Cleared!',
+    //   subTitle: 'You have cleared all levels for Subject Grand Test.',
+    //   buttons: [{
+    //     text: 'OK',
+    //       handler: data => {
+    //         console.log('Cancel clicked');
+    //         this.allLevelCleared = true;
+    //         this.setQuestionsDataToIndexedDB();
+    //         setTimeout(() => {
+    //           this.navCtrl.pop();
+    //         },500)
+            
+    //       }
+    //   }]
+    // });
+    
+    // alert.present();
   };//end showMaxLevelReachAlert
 
   getSavedAllImageAllPackageFromIndexedDb(newLevel: number) {
@@ -654,7 +687,7 @@ export class GrandQuestions {
       if (this.platform.is("mobile")) {
         let jsonFileName = `Package0000${newLevel+1}.json`;//file names start from 1,2,3,4 while newLevel start form 0,1,2,3, so if newLevel =1, json file should be PackageJson2
         console.log(jsonFileName);
-        this._file.readAsText(this.fs, this.mainDirectoryName + "/" + this.passedId + "/grandpackage/" + jsonFileName).
+        this._file.readAsText(this.fs, this.mainDirectoryName + "/" + this.passedId + `/${this.questionModuleName}package/` + jsonFileName).
           then((data: any) => {
             let grandJson = JSON.parse(data);
             console.log('questions json from local read::', grandJson);
@@ -668,7 +701,8 @@ export class GrandQuestions {
             this.showLocalFileReadErrorAlert();
           })
       } else {//for desktop
-        this._userDataService.getGrandQuestionsFromServer(this.passedId, newLevel)
+        //[`get${this.capitalizeFirstCharOfQuestonModuleName}QuestionsFromServer`]
+        this._userDataService[`get${this.capitalizeFirstCharOfQuestonModuleName}QuestionsFromServer`](this.passedId, newLevel)
           .subscribe(
           (response) => {
             let status = response.status;
@@ -706,13 +740,17 @@ export class GrandQuestions {
     let submitData = {
       user_id:this.userData.user_id,
       package_id:package_id,
-      grand_level:levelCleard,
       timestring:this.timestamp,
       percent_marks:percentMarks,
       level_cleared:1
     }
 
-    this._userDataService.insertGrandLevelSubmitData(submitData)
+    submitData[`${this.questionModuleName}_level`] = levelCleard;
+
+    if(this.isGuestUser){
+
+    }else{
+      this._userDataService[`insert${this.capitalizeFirstCharOfQuestonModuleName}LevelSubmitData`](submitData)
         .subscribe(
         (response) => {
           let status = response.status;
@@ -728,6 +766,8 @@ export class GrandQuestions {
         },
         (err) => this.showError('some error')
         )
+    }
+    
 
   };//
 
@@ -746,12 +786,13 @@ export class GrandQuestions {
       lastQuestionAttempted: 0,
       packageId: this.passedId,
       questions: _.shuffle(responseData[0].data),
-      originalTimeAlloted:200,//responseData[0].timeDuration * 60,
-      secondsRemaining: 200,//(responseData[0].timeDuration * 60),
+      originalTimeAlloted:responseData[0].timeDuration * 60,
+      secondsRemaining: (responseData[0].timeDuration * 60),
       allLevelCleared: this.allLevelCleared
     }
     console.log(data);
-    this._userDataService.setGrandQuestionDataIndexedDb(this.passedId, data);//set data into
+    //this._userDataService.setGrandQuestionDataIndexedDb(this.passedId, data);//set data into
+    this._userDataService[`set${this.capitalizeFirstCharOfQuestonModuleName}QuestionDataIndexedDb`](this.passedId, data);//set data into
     this.showLevelClearedAlert();
   };//end editImageTestWithNewLevel
 
@@ -763,28 +804,38 @@ export class GrandQuestions {
     let responseData: any;
     let data: any;
 
-    this._storage.get("grand_" + this.passedId).then((val) => {
+    this._storage.get(`${this.questionModuleName}_` + this.passedId).then((val) => {
       if (val == null) {
 
       } else {
         console.log(val);
         allImagesPackage = val;
         responseData = allImagesPackage;
-        console.log(val);
+
+        //[`set${capitalizeFirstCharOfQuestonModuleName}QuestionDataIndexedDb`]
+        //reset all answers given by user
+        _.forEach(responseData.questions,(value,index) => {
+          value.questiondata.isAnswered = "no",
+          value.questiondata.isFlagged = "false",
+          value.questiondata.userChoice = "Z",
+          value.questiondata.isCorrect = "NA"
+        });
+        
         data = {
           level: suppliedLevel,
           lastQuestionAttempted: 0,
           packageId: this.passedId,
           questions: _.shuffle(responseData.questions),
           originalTimeAlloted:val.originalTimeAlloted,
-          secondsRemaining: 200,//val.originalTimeAlloted,
+          secondsRemaining: val.originalTimeAlloted,
           allLevelCleared: this.allLevelCleared
         }
         console.log(data);
-        this._userDataService.setGrandQuestionDataIndexedDb(this.passedId, data);//set data int
+        this._userDataService[`set${this.capitalizeFirstCharOfQuestonModuleName}QuestionDataIndexedDb`](this.passedId, data);//set data int
         this.prepareAndsubmitTestLevelResultForFailure(this.passedId,this.currentLevel,false)
         setTimeout(() => {
-          this.showTimeResetAlert();
+          this.navCtrl.pop();
+          //this.showTimeResetAlert();
         },500)
     }
 
@@ -821,34 +872,64 @@ export class GrandQuestions {
 
 //this done on 15th april  
 
-  checkMyProgress(fab: FabContainer) {
-    // let percentMarks = Math.floor((this.totalCorrectAnswers / this.questionSetChosen.length) * 100);
-    // if (percentMarks >= this.passingMarks) {
-    //   console.log('Hurray, test cleared');
-    //   this.clearLevelAndUpgrade();
-    // } else {
-    //   console.log('Sorry, test not cleared, cant continue');
-    //   if (this.secondsRemaining > 0) {
-    //     this.showTestNotClearedAlert();
-    //   }else {
-    //     console.log("times consumed need to reset");
-    //     this.editImageTestWithResetTimer();
-    //   }
-    // }
-    // console.log(percentMarks)
-    fab.close();
+  checkMyProgress() {
+
+
+    //pause the test
+    this.testRunning = false;
+    this.setQuestionsDataToIndexedDB();
+    this.showFinishTestAlert();
+    
+  };//checkMyProgress
+
+  showFinishTestAlert() {
+    let alert = this.alertCtrl.create({
+      title: 'Finish Test',
+      message: 'Do you want to finish this test?',
+      enableBackdropDismiss:false,
+      buttons: [
+        {
+          text: 'No',
+          role: 'cancel',
+          handler: () => {
+            console.log('no')
+            this.testRunning = true;
+            this.updateTimer();//restart the Timer
+          }
+        },
+        {
+          text: 'Yes',
+          handler: () => {
+            if(this.platform.is('mobile') && this._network.type == 'none'){
+              this.showNoNetworkAlertOnFinishtest();
+            }else{
+              this.showResultPopover();
+            }            
+          }
+        }
+      ]
+    });
+    alert.present();
+  };//
+
+  showResultPopover(){
+
+    this.secondsRemaining = 0;
+    this.setQuestionsDataToIndexedDB();
+
     let percentMarks = Math.floor((this.totalCorrectAnswers / this.questionSetChosen.length) * 100);
     this.resultObject.totalQuestions = this.questionSetChosen.length;
     this.resultObject.skippedQuestions = 0;
     this.resultObject.totalCorrectAnswers = 0;
     this.resultObject.totalWrongAnswers = 0;
-    this.resultObject.percentMarks = percentMarks;
+    //this.resultObject.percentMarks = percentMarks;
     _.forEach(this.questionSetChosen,(value,index) => {
       if(value.questiondata.isAnswered == "no"){
         this.resultObject.skippedQuestions++;
       }else{
         if(value.questiondata.isCorrect == true){
           this.resultObject.totalCorrectAnswers++;
+          this.resultObject.percentMarks = Math.floor((this.resultObject.totalCorrectAnswers / this.questionSetChosen.length) * 100);
         }else{
           this.resultObject.totalWrongAnswers++;
         }
@@ -859,32 +940,13 @@ export class GrandQuestions {
       // You should resize the content to use the space left by the navbar
       this.content.resize();
     },500);
-  };//checkMyProgress
 
-  closeResultPopover(fabpopover:FabContainer){
+  };//end showResultPopover
+
+  closeResultPopover(){
     console.log('seconds remaining', this.secondsRemaining);
-    let percentMarks = Math.floor((this.totalCorrectAnswers / this.questionSetChosen.length) * 100);
-    if(this.secondsRemaining == 0){//if total time used
-      if(percentMarks >= this.passingMarks){//if time used and passing marks acheived must goto next level
-        console.log("You are good to go to next level");
-        this.closeResultPopoverAndResize();
-        this.clearLevelAndUpgrade();
-      }else{//show time over but level not clear alert and reset this level
-        console.log("show time exhausted but level not clear alert");
-        this.closeResultPopoverAndResize();
-        this.editImageTestWithResetTimer();
-      }
-    }else{//if total time not used
-      if(percentMarks >= this.passingMarks){//if time not used and passing marks acheived show choice alert
-        console.log("You are good to go to next level but do you want to continue this test");
-        this.presentContinueTestChoiceAlert();
-      }else{
-        console.log("you should continue test");
-        this.closeResultPopoverAndResize();
-      }
-    }
-
-     
+    this.closeResultPopoverAndResize();
+    this.submitCurrentLevelTest();    
 
   };//closeResultPopover
 
@@ -941,20 +1003,24 @@ export class GrandQuestions {
 
     let percentMarks = Math.floor((this.totalCorrectAnswers / this.questionSetChosen.length) * 100);
 
-    
-
     this.appendTimestamp();
 
+    console.log(this.questionModuleName.charAt(0).toUpperCase() + this.questionModuleName.slice(1).toLowerCase());
+    
     let submitData = {
       user_id:this.userData.user_id,
       package_id:package_id,
-      grand_level:this.currentLevel+1,
       timestring:this.timestamp,
       percent_marks:percentMarks,
       level_cleared:0
     }
 
-    this._userDataService.insertGrandLevelSubmitData(submitData)
+    submitData[`${this.questionModuleName}_level`] = this.currentLevel+1;
+
+    if(this.isGuestUser){
+
+    }else{
+      this._userDataService[`insert${this.capitalizeFirstCharOfQuestonModuleName}LevelSubmitData`](submitData)
         .subscribe(
         (response) => {
           let status = response.status;
@@ -968,6 +1034,8 @@ export class GrandQuestions {
         },
         (err) => this.showError('some error')
         )
+    }
+    
 
   };//end prepareAndsubmitTestLevelResultForFailure
 
@@ -976,15 +1044,33 @@ export class GrandQuestions {
     if(question.questiondata.isCorrect == 'NA'){
       isAnswerCorrect = "";
     }else if(question.questiondata.isCorrect == true){
-      isAnswerCorrect = 'Yes';
+      isAnswerCorrect = 'Correct';
     }else{
-      isAnswerCorrect = 'No';
+      isAnswerCorrect = 'Incorrect';
     }
     return isAnswerCorrect;
   };//
 
+  setAnswerColor(question:any):string{
+    let answerColor:string = '';
+    if(question.questiondata.isCorrect == 'NA'){
+      answerColor = "";
+    }else if(question.questiondata.isCorrect == true){
+      answerColor = 'secondary';
+    }else{
+      answerColor = 'danger';
+    }
+    return answerColor;
+  };//
+
+  
+
+  
+
   gotoPreviousScreen(){
     this.navCtrl.pop();
   }
+
+
 
 };//end class

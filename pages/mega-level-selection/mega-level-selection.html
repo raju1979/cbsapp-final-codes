@@ -7,7 +7,7 @@
 <ion-header>
 
   <ion-navbar color="appblue">
-    <ion-title align="center"> Mega Grand Test</ion-title>
+    <ion-title align="center">MEGA GRAND TEST</ion-title>
   </ion-navbar>
 
 </ion-header>
@@ -24,8 +24,16 @@
 
 
 
-  <ion-fab right bottom  (click)="resetTestBtnHandler()">
+  <!--<ion-fab right bottom  (click)="resetTestBtnHandler()">
     <button ion-fab color="appblue"><ion-icon name="refresh"></ion-icon></button>
-  </ion-fab>
+  </ion-fab>-->
 
 </ion-content>
+
+<ion-footer>
+  <ion-toolbar color="appblue">
+      <button ion-button clear block (click)="resetTestBtnHandler()" color="light">
+        RESET
+      </button>
+  </ion-toolbar>    
+</ion-footer>

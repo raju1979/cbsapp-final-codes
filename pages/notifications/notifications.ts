@@ -33,6 +33,8 @@ export class NotificationsPage {
 
   newTimeStamp:string;
 
+  loaderVisible:boolean = false;
+
   constructor(public navCtrl: NavController, public navParams: NavParams, public platform: Platform, private alertCtrl: AlertController, private _userDataService: UserdataService, private _toastCtrl: ToastController, private _loadingController: LoadingController, private _network:Network,private _storage:Storage) {
 
 
@@ -40,28 +42,42 @@ export class NotificationsPage {
 
   };//end constructor
 
-  ngOnInit(){
-    
+  ionViewWillLeave() {
+    console.log("Looks like I'm about to leave :(");
+    if(this.loaderVisible){
+      this.loaderVisible = false;
+      this.loader.dismiss();
+    }
+  }
 
-    this._storage.get("user_master")
+  ngOnInit(){
+
+    if(this.platform.is('mobile') && this._network.type == 'none'){
+      this.showNoNetworkAlert();
+    }else{
+      this._storage.get("user_master")
       .then((val) => {
         if(val == null){
 
         }else{
           this.userData = val;
           console.log("user data is",this.userData);
+          this.fetchNotificationListAferUserDataget();
         }
       })
+    };//end if(this.platform.is('mobile') && this._network.type == 'none')
+    
+  };//end ngOnInit
 
-    this.loader = this._loadingController.create({
-      content: "Please wait... Fetching online notifications",
-    });
-    this.loader.present();  
+  fetchNotificationListAferUserDataget(){
+
+    
+    this.presentLoading('Fetching online notifications');
 
     this._userDataService.getNotificationList()
       .subscribe(
         (data) => {
-          this.loader.dismiss();
+          this.dismissLoader();
           let status = data.status;
           let returnedData = data.json();
           console.log(status,returnedData)
@@ -70,28 +86,30 @@ export class NotificationsPage {
             if(returnedData.notifications.length > 0){
               this.notifications = returnedData.notifications;
               console.log(this.notifications);
-              this.loader = this._loadingController.create({
-                content: "Please wait... Fetching your purchased packages",
-              });
-              this.loader.present();
-              this._userDataService.getAllPackageByUser(this.userData.user_id)
-                .subscribe(
-                  (data) => this.populateUserPackages(data),
-                  (err) => this.showDataFetchErrorFromServer('Unable to fetch user packages')
-                )
+              setTimeout(() => {
+                this.presentLoading('Fetching your purchased packages');
+                this._userDataService.getAllPackageByUser(this.userData.user_id)
+                  .subscribe(
+                    (data) => this.populateUserPackages(data),
+                    (err) => this.showDataFetchErrorFromServer()
+                  )
+              },1000)
+              
             }else if(returnedData.notifications.result == 0){
               console.log('no notifications found');
             }
           }
         },
         (err) => {
-          this.showDataFetchErrorFromServer('Unable to fetch notifications')
+          this.showDataFetchErrorFromServer()
         }
-      )
-  };//end ngOnInit
+      );//end .subscribe
+
+
+  };//end fetchNotificationListAferUserDataget
 
   populateUserPackages(userPackagesData:any){
-    this.loader.dismiss();
+    this.dismissLoader();
     console.log(userPackagesData);
     if(userPackagesData[0].result == 0){
       console.log("no package for this user")
@@ -160,14 +178,11 @@ export class NotificationsPage {
         packageid:item.package_id
       }
       console.log(item.package_id)
-      this.loader = this._loadingController.create({
-        content: "Please wait... Fetching your purchased packages",
-      });
-      this.loader.present();
+      this.presentLoading('Fetching your packages')
       this._userDataService.getPackageDetailFromPackageMaster(packageObject)
         .subscribe(
           (response:any) => {
-            this.loader.dismiss();
+            this.dismissLoader();
             let status:any = response.status;
             let data:any = response.json();
             console.log(data)
@@ -193,7 +208,7 @@ export class NotificationsPage {
             }            
           },//end response:any
           (err:any) => {
-            this.showDataFetchErrorFromServer('unable to fetch package details');
+            this.showDataFetchErrorFromServer();
           }
         )
       
@@ -201,12 +216,25 @@ export class NotificationsPage {
     
   };//
 
-   showDataFetchErrorFromServer(err: any): void {
-    this.loader.dismiss();
-    let errorMsg: any = JSON.stringify(err);
+   showNoNetworkAlert(): void {
+    if(this.loaderVisible){
+      this.loader.dismiss();
+    }        
+    let alert = this.alertCtrl.create({
+      title: 'Not Online!',
+      subTitle: 'Please check your internet connection!',
+      buttons: ['OK']
+    });
+    alert.present();
+  };//
+
+  showDataFetchErrorFromServer(): void {
+    if(this.loaderVisible){
+      this.loader.dismiss();
+    } 
     let alert = this.alertCtrl.create({
       title: 'Error!',
-      subTitle: `There is some problem at server. Please check your network connection and Restart the App!<br />${errorMsg}`,
+      subTitle: `There is some problem at server. Please check your network connection!`,
       buttons: ['OK']
     });
     alert.present();
@@ -229,6 +257,31 @@ export class NotificationsPage {
     });
     alert.present();
   };//end showNoPackageAlert
+
+  presentLoading(msg?:string) {
+
+      this.loader = this._loadingController.create({
+          content: `Please wait...${msg}`,
+          showBackdrop: true, //dark background while loading
+          dismissOnPageChange: true
+      });
+
+      this.loaderVisible = true;
+
+      this.loader.onDidDismiss(() => {
+        console.log('Dismissed loading');
+        this.loaderVisible = false;
+      });
+
+      this.loader.present();
+
+  };//
+
+  dismissLoader(){
+    setTimeout(() => {
+      this.loader.dismiss();
+    },500)    
+  };//
 
 
 };//end class

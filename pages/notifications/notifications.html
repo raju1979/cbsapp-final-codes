@@ -9,7 +9,7 @@
   </ion-navbar>
 </ion-header>
 <ion-content padding class="notficationIonContent">
-  <div id="noNotificationContainer" *ngIf="notifications.length <= 0">
+  <div id="noNotificationContainer" *ngIf="notifications[0]?.result == 0">
     There is no notification
   </div>
   <div class="notificationsDiv" *ngIf="notifications.length > 0">

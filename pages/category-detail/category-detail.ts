@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams, ToastController, LoadingController,Platform } from 'ionic-angular';
+import { NavController, NavParams, ToastController, LoadingController,Platform,AlertController } from 'ionic-angular';
 
 import { PackageView } from '../package-view/package-view';
 
 
 import { UserdataService } from "../../services/userdata-service";
 import { Storage } from '@ionic/storage';
+import { Network } from '@ionic-native/network';
 
 declare var _: any;
 
@@ -38,10 +39,10 @@ export class CategoryDetail {
 
   baseUrlPackage: any;
 
-  
+  loaderVisible:boolean = false;
 
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private _userDataService: UserdataService, private _toastCtrl: ToastController, private _loadingController: LoadingController, private _storage: Storage, private _platform:Platform) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, private _userDataService: UserdataService, private _toastCtrl: ToastController, private _loadingController: LoadingController, private _storage: Storage, private _platform:Platform,private alertCtrl: AlertController,private _network:Network) {
 
     this.baseUrlPackage = this._userDataService.returnBaseUrlPackage();
 
@@ -58,32 +59,34 @@ export class CategoryDetail {
   }
 
   ionViewDidEnter(): void {
-    this._storage.get("user_master")
-      .then((data) => {
-        console.log(data);
-        this.userData = data;//get user data from user_master key
-        console.log(this.userData);
-        this.getUserOnlinePackages(this.userData.user_id);//send request to server
-      })
-      .catch((err) => {
-        console.log("Myshelf error", JSON.stringify(err));
-      })
+    
+  };
+
+  ionViewWillLeave() {
+    console.log("Looks like I'm about to leave :(");
+    if(this.loaderVisible){
+      this.loaderVisible = false;
+      this.loading.dismiss();
+    }
   };
 
   ngOnInit() {
 
-    this.loading = this._loadingController.create({
-      content: 'Please wait...'
-    });
-    this.loading.present();
+    if(this._platform.is("mobile") && this._network.type == "none"){
+      this.showNoNetworkAlert();
+    }else{
+      this.presentLoading('Fetching online packages');
 
-    this.categoryData = this.navParams.get('data');
-    console.log("ITEM is ::" + this.categoryData);
-    this._userDataService.getBooksByGnereIdCategoryDetailsPage(this.categoryData.id, 0)
-      .subscribe(
-      (data) => this.populatePackageListArray(data),
-      (err) => this.showHttpError(err)
-      )
+      this.categoryData = this.navParams.get('data');
+      console.log("ITEM is ::" + this.categoryData);
+      this._userDataService.getBooksByGnereIdCategoryDetailsPage(this.categoryData.id, 0)
+        .subscribe(
+        (data) => this.populatePackageListArray(data),
+        (err) => this.showDataFetchErrorFromServer()
+        )
+    }
+
+    
   };//
 
   showError(err: any) {
@@ -105,15 +108,27 @@ export class CategoryDetail {
       this.packageListArray = data.results;
       this.tempPackageListArray = [].concat(this.packageListArray);
       console.log(this.tempPackageListArray);
-    }   
+    }
+
+    this._storage.get("user_master")
+      .then((data) => {
+        console.log(data);
+        this.userData = data;//get user data from user_master key
+        console.log(this.userData);
+        this.getUserOnlinePackages(this.userData.user_id);//send request to server
+      })
+      .catch((err) => {
+        console.log("Myshelf error", JSON.stringify(err));
+      })   
 
   }
 
   getUserOnlinePackages(id: any) {
+    this.presentLoading("fetching packages");
     this._userDataService.getAllPackageByUser(id)
       .subscribe(
       (data) => this.getPackages(data),
-      (err) => this.showError(err)
+      (err) => this.showDataFetchErrorFromServer()
       );
   }//
 
@@ -124,7 +139,7 @@ export class CategoryDetail {
   };//end populateUserPackagesList
 
   getPackages(data: any) {
-    this.loading.dismiss();
+    this.dismissLoader();
     if (data[0].result == 0) {
       console.log('You dont have any packages purchased');
     } else {
@@ -192,15 +207,7 @@ export class CategoryDetail {
 
 
 
-  showHttpError(err: any): void {
-    this.loading.dismiss();
-    let toast = this._toastCtrl.create({
-      message: `Sorry, Some error occured from server, please check the network connectivity and restart the App. Error Code: ${err.status}`,
-      duration: 5000,
-      position: 'middle'
-    });
-    toast.present();
-  };//
+
 
 
   gotoPackageView(id: any) {
@@ -210,13 +217,6 @@ export class CategoryDetail {
     })
   };;//
 
-
-  // gotoDownloadedPackageView(packageData: any) {
-  //   this.navCtrl.push(DownloadedPackageView, {
-  //     data: packageData,
-  //     guestUser:'no'
-  //   })
-  // };//
 
   gotoPackageViewAsPrivilegedUser(packageData: any) {
     this.navCtrl.push(PackageView, {
@@ -230,6 +230,55 @@ export class CategoryDetail {
           return this.baseUrlPackage +   packageId + "/" + "poster.png";
 
     };//
+
+  showNoNetworkAlert(): void {
+    if(this.loaderVisible){
+      this.loading.dismiss();
+    }     
+    let alert = this.alertCtrl.create({
+      title: 'Not Online!',
+      subTitle: 'Please check your internet connection!',
+      buttons: ['OK']
+    });
+    alert.present();
+  };//
+
+  showDataFetchErrorFromServer(): void {
+    if(this.loaderVisible){
+      this.loading.dismiss();
+    }
+    let alert = this.alertCtrl.create({
+      title: 'Error!',
+      subTitle: `There is some problem at server. Please check your network connection!`,
+      buttons: ['OK']
+    });
+    alert.present();
+  };//
+
+  presentLoading(msg?:string) {
+
+    this.loading = this._loadingController.create({
+        content: `Please wait...${msg}`,
+        showBackdrop: true, //dark background while loading
+        dismissOnPageChange: true
+    });
+
+    this.loaderVisible = true;
+
+    this.loading.onDidDismiss(() => {
+      console.log('Dismissed loading');
+      this.loaderVisible = false;
+    });
+
+    this.loading.present();
+
+  };//
+
+  dismissLoader(){
+    setTimeout(() => {
+      this.loading.dismiss();
+    },500)    
+  };//
 
  
 

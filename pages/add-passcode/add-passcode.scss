@@ -3,6 +3,10 @@ page-add-passcode {
     {
         font-family: "Arsenal", sans-serif !important;
     }
+    .addPasscodePage h3{
+        font-size: 1.2em;
+        text-align: center;
+    }
     .addPasscodeInput
     {
         float: left;
@@ -96,5 +100,11 @@ page-add-passcode {
     .uniqueId{
         color: color($colors, warning);
         font-size: .8em;
+    }
+    #existingPasscodesContainer p
+    {
+        text-align: center;
+        font-size: 1.2em;
+        font-weight: bold;
     }
 }

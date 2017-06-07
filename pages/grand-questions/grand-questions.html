@@ -1,6 +1,6 @@
 <ion-header>
   <ion-navbar color="appblue" [hideBackButton]="true" *ngIf="!showPopoverDiv">
-    <ion-title align="center">GRAND TEST</ion-title>
+    <ion-title align="center">SUBJECT {{questionModuleName.toUpperCase()}} TEST</ion-title>
     <ion-buttons start>      
       <button ion-button icon-only color="light" [hidden]="testRunning" (click)="gotoPreviousScreen()">
         <ion-icon ios="ios-arrow-back" md="md-arrow-back"></ion-icon>
@@ -49,71 +49,60 @@
             </div>-->
     </div>
   </div>
-  <ion-fab right bottom #fab *ngIf="!testRunning && !showPopoverDiv" [@enterAnimation]="testRunning">
-    <button ion-fab color="appblue"><ion-icon name="arrow-dropleft"></ion-icon></button>
-    <ion-fab-list side="left">
-      <button ion-fab color="primary" (click)="showStats(fab)" [disabled]="testRunning"><ion-icon name="grid"></ion-icon></button>
-      <button ion-fab color="danger"  (click)="submitCurrentLevelTest(fab)"><ion-icon name="done-all"></ion-icon></button>
-      <button ion-fab color="secondary"  (click)="checkMyProgress(fab)"><ion-icon ios="ios-calculator-outline" md="md-calculator"></ion-icon></button>
-    </ion-fab-list>
+  <ion-fab right bottom #fab *ngIf="!showPopoverDiv" [@enterAnimation]="testRunning">
+    <button ion-fab color="appblue" (click)="showStats()"><ion-icon name="md-grid"></ion-icon></button>
+    
   </ion-fab>
 
   <ion-fab left bottom #fabpopover *ngIf="showPopoverDiv">
-    <button ion-fab color="dullOrange"><ion-icon name="arrow-dropright"></ion-icon></button>
-    <ion-fab-list side="right">
-      <button ion-fab color="primary" (click)="closeResultPopover(fabpopover)"><ion-icon name="ios-checkmark-circle-outline"></ion-icon></button>
-      <button ion-fab color="danger"  (click)="scrollResultViewContainerToTop(fabpopover)"><ion-icon name="ios-arrow-dropup-outline"></ion-icon></button>
-    </ion-fab-list>
+    <button ion-fab color="appblue" (click)="scrollResultViewContainerToTop()"><ion-icon name="ios-arrow-dropup-outline"></ion-icon></button>
   </ion-fab>
 
-  <div id="resultViewContainer"  *ngIf="showPopoverDiv"  #resultViewContainer>
+  <div id="resultViewContainer"  *ngIf="showPopoverDiv"  >
     <div id="resultTextContainer">Result</div>
-    <ion-list>
-      <div class="resultTexts"><span>Total Questions</span><span>{{resultObject.totalQuestions}}</span></div>
-      <div class="resultTexts"><span>Correct Answers</span><span>{{resultObject.totalCorrectAnswers}}</span></div> 
-      <div class="resultTexts"><span>Wrong Answers</span><span>{{resultObject.totalWrongAnswers}}</span></div> 
-      <div class="resultTexts"><span>Skipped Questions</span><span>{{resultObject.skippedQuestions}}</span></div>
-      <div class="resultTexts"><span>Percentage</span><span>{{resultObject.percentMarks}}%</span></div>
-      <div class="resultTexts"><span>Current Level</span><span> {{currentLevel+1}} of {{maxLevelInthisTestCategory+1}}</span></div>
-      <div class="resultTexts"><span>Level Cleared</span><span>{{resultObject.percentMarks >= passingMarks ? "Clear" : "Not Clear"}}</span></div>
-    </ion-list>
+    <div id="resultShowContainer" #resultViewContainer>
+      <ion-list>
+        <div class="resultTexts"><span>Total Questions</span><span>{{resultObject.totalQuestions}}</span></div>
+        <div class="resultTexts"><span>Correct Answers</span><span>{{resultObject.totalCorrectAnswers}}</span></div> 
+        <div class="resultTexts"><span>Wrong Answers</span><span>{{resultObject.totalWrongAnswers}}</span></div> 
+        <div class="resultTexts"><span>Skipped Questions</span><span>{{resultObject.skippedQuestions}}</span></div>
+        <div class="resultTexts"><span>Percentage</span><span>{{resultObject.percentMarks}}%</span></div>
+        <div class="resultTexts"><span>Current Level</span><span> {{currentLevel+1}} of {{maxLevelInthisTestCategory+1}}</span></div>
+        <div class="resultTexts"><span>Level Cleared</span><span>{{resultObject.percentMarks >= passingMarks ? "Clear" : "Not Clear"}}</span></div>
+      </ion-list>
 
-    <ion-card *ngFor="let question of questionSetChosen, let i = index">
-      <ion-card-header class="questionTextHeader">
-          <span>Q:{{i+1}}</span> :: <span [innerHTML] = "question.questiondata.question" class="questionTextInnerHtml"></span>
-      </ion-card-header>
-      <ion-card-content>
-        <section class="correctAnswerContainer">
-          <span class="corectAnswerHeading">Correct Answer</span><span>{{question.rightanswerdata.rightanswer[0].answer}}</span>
-        </section>
-        <section class="correctAnswerContainer">
-          <span class="corectAnswerHeading">Your Answer</span><span [innerHTML]="getUserSelectedAnswer(question)"></span>
-        </section>
-        <section class="correctAnswerContainer">
-          <span class="corectAnswerHeading">Correct Answer</span><span  [innerHTML]="isAnswerCorrect(question)"></span>
-        </section>
-      </ion-card-content>
-    </ion-card>
+      <ion-card *ngFor="let question of questionSetChosen, let i = index">
+        <ion-card-header class="questionTextHeader" text-wrap>
+            <span>Q:{{i+1}}</span> :: <span [innerHTML] = "question.questiondata.question" class="questionTextInnerHtml"></span>
+        </ion-card-header>
+        <ion-card-content>
+          <section class="correctAnswerContainer">
+            <span class="corectAnswerHeading">Correct Answer</span><span>{{question.rightanswerdata.rightanswer[0].answer}}</span>
+          </section>
+          <section class="correctAnswerContainer">
+            <span class="corectAnswerHeading">Your Answer</span><span [innerHTML]="getUserSelectedAnswer(question)"></span>
+          </section>
+          <section class="correctAnswerContainer">
+            <span  [innerHTML]="isAnswerCorrect(question)" ion-text [color]="setAnswerColor(question)"></span>
+          </section>
+        </ion-card-content>
+      </ion-card>
+    </div>
+    <div id="resultBtnContainer">
+      <div id="btnInnerContainer">
+        <button ion-button large block clear color="light" (click)="closeResultPopover()">Close</button>
+      </div>
+    </div>
+    
 
   </div>
   <!--end iv id="resultViewContainer"-->
 
 </ion-content>
 <ion-footer align="center" color="appblue" *ngIf="!showPopoverDiv">
-  <!--<ion-toolbar color="light">
-        <ion-buttons>
-            <button ion-button icon-only>
-                <ion-icon name="pause" color="appblue"></ion-icon>
-            </button> 
-             <button ion-button icon-only>
-                 
-            </button> 
-            <button ion-button icon-only>
-                <ion-icon name="log-out" color="appblue"></ion-icon>
-            </button>
-        </ion-buttons>
-    </ion-toolbar>-->
-  <ion-toolbar color="appblue">
+
+
+  <!--<ion-toolbar color="grey2">
     <ion-buttons start>
       <button ion-button  (click)="prevQuestion()" [disabled]="!testRunning">
           <ion-icon name="arrow-back"></ion-icon>
@@ -133,4 +122,40 @@
       </button>
     </ion-buttons>
   </ion-toolbar>
+
+  <ion-toolbar color="appblue">
+    <div class="finishAndGridToolbar">
+      <button  ion-button block clear full (click)="checkMyProgress()" color="light">
+          Finish
+      </button>
+      <button  ion-button block clear full (click)="showStats()" color="light">
+          Grid
+      </button>
+    </div>
+  </ion-toolbar>-->
+  
+  <ion-toolbar class="buttonsToolbar" color="appblue">
+    <div class="buttonContainerInner">
+      <button ion-button small clear (click)="pauseTest()" color="light">
+            <span [ngSwitch]="testRunning">
+                <span *ngSwitchCase="true">PAUSE TEST</span>
+                <span *ngSwitchCase="false">START TEST</span>
+            </span>
+        </button>
+        <button  ion-button small clear (click)="checkMyProgress()" color="light">
+          FINISH TEST
+      </button>
+    </div>
+    <div class="buttonContainerInner">
+      <button ion-button  (click)="prevQuestion()" [disabled]="!testRunning" clear color="light">
+          <ion-icon name="arrow-back"></ion-icon>
+          <span class="opaqueText">PREV</span>
+      </button>
+      <button ion-button (click)="nextQuestion()" [disabled]="!testRunning" clear color="light">                
+          <span class="opaqueText">NEXT</span>
+          <ion-icon name="arrow-forward"></ion-icon>
+      </button>
+    </div>
+  </ion-toolbar>
+
 </ion-footer>

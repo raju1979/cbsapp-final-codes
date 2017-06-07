@@ -1,5 +1,5 @@
-import { Component, trigger, transition, style, animate } from '@angular/core';
-import { NavController, NavParams, ToastController, ModalController } from 'ionic-angular';
+import { Component, trigger, transition, style, animate,ViewChild,ElementRef  } from '@angular/core';
+import { Content,NavController, NavParams, ToastController, ModalController,AlertController } from 'ionic-angular';
 import { DomSanitizer, SafeResourceUrl, SafeUrl, SafeHtml } from "@angular/platform-browser";
 
 import { UserdataService } from "../../services/userdata-service";
@@ -31,7 +31,11 @@ declare var _: any;
 
 export class QuestionsView {
 
+  @ViewChild(Content) content: Content;
 
+  @ViewChild('resultViewContainer') private resultViewContainer : ElementRef;
+
+  @ViewChild('backbutton') private backbutton:ElementRef;
 
   chapterData: any;
   questionsArray: any = [];
@@ -59,7 +63,13 @@ export class QuestionsView {
 
   totalCorrectAnswers: number = 0;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private _userDataService: UserdataService, private _storage: Storage, private _sanitizer: DomSanitizer, private _toastCtrl: ToastController, private _modalCtrl: ModalController) {
+  showPopoverDiv:boolean = false;
+
+  resultObject:any = {};//it will hold result like totalCorrect etc
+
+  readonly passingMarks: number = 1;//this should be 80
+
+  constructor(public navCtrl: NavController, public navParams: NavParams, private _userDataService: UserdataService, private _storage: Storage, private _sanitizer: DomSanitizer, private _toastCtrl: ToastController, private _modalCtrl: ModalController, private alertCtrl:AlertController) {
 
 
 
@@ -75,6 +85,8 @@ export class QuestionsView {
 
     console.log(this.passedId);
   };
+
+  
 
   ionViewDidEnter() {
     //  get a key/value pair based upon passed package id and retreived from indexedDb
@@ -234,6 +246,10 @@ export class QuestionsView {
     return this._sanitizer.bypassSecurityTrustHtml(string);
   }
 
+  sanitizeOptionText(string:string):SafeHtml{
+    return this._sanitizer.bypassSecurityTrustHtml(string);
+  }
+
   showStats(): void {
     this.presentGridModal()
     //this.navCtrl.push(ShowQuestionStats);
@@ -363,6 +379,129 @@ export class QuestionsView {
     });//end modal.onDidDismiss
     modal.present();//call th modal
   };//end presentGridModal()
+
+
+  checkMyProgress() {
+    
+    let percentMarks = Math.floor((this.totalCorrectAnswers / this.questionSetChosen.length) * 100);
+      this.resultObject.totalQuestions = this.questionSetChosen.length;
+      this.resultObject.skippedQuestions = 0;
+      this.resultObject.totalCorrectAnswers = 0;
+      this.resultObject.totalWrongAnswers = 0;
+      //this.resultObject.percentMarks = percentMarks;
+      _.forEach(this.questionSetChosen,(value,index) => {
+        if(value.questiondata.isAnswered == "no"){
+          this.resultObject.skippedQuestions++;
+        }else{
+          if(value.questiondata.isCorrect == true){
+            this.resultObject.totalCorrectAnswers++;
+            this.resultObject.percentMarks = Math.floor((this.resultObject.totalCorrectAnswers / this.questionSetChosen.length) * 100);
+          }else{
+            this.resultObject.totalWrongAnswers++;
+          }
+        }
+      })
+      setTimeout(() => {
+        this.showPopoverDiv = true;
+        // You should resize the content to use the space left by the navbar
+        this.content.resize();
+      },500);
+    };//checkMyProgress
+
+    closeResultPopover(){
+      // let percentMarks = Math.floor((this.totalCorrectAnswers / this.questionSetChosen.length) * 100);
+      // if(percentMarks >= this.passingMarks){
+      //   this.presentContinueTestChoiceAlert();
+      // }else{
+      //   this.closeResultPopoverAndResize();
+      // } 
+      this.presentContinueTestChoiceAlert();  
+      
+    };//closeResultPopover
+
+  closeResultPopoverAndResize(){
+      this.showPopoverDiv = false;
+      // You should resize the content to use the space left by the navbar
+      this.content.resize();
+  }
+
+    getUserSelectedAnswer(question:any):string{
+    let userSelectedAnswer:string = '';
+    if(question.questiondata.userChoice == 'Z'){
+      userSelectedAnswer = "Not Answered";
+    }else{
+      userSelectedAnswer = question.optiondata.options[question.questiondata.userChoice].optiontext;
+    }
+    return userSelectedAnswer
+  };//
+
+  scrollResultViewContainerToTop(){
+    this.resultViewContainer.nativeElement.scrollTop = 0;
+  }
+
+  presentContinueTestChoiceAlert() {
+    this.closeResultPopoverAndResize();
+    setTimeout(() => {
+      this.navCtrl.pop();
+      //this.showTimeResetAlert();
+    },500)
+
+    // let alert = this.alertCtrl.create({
+    //   title: 'Your test is cleared.',
+    //   message: 'Do you want to close test?',
+    //   buttons: [
+    //     {
+    //       text: 'Continue Test',
+    //       role: 'cancel',
+    //       handler: () => {
+    //         this.closeResultPopoverAndResize();
+    //       }
+    //     },
+    //     {
+    //       text: 'Close Test',
+    //       handler: () => {
+    //         this.closeResultPopoverAndResize();
+    //         setTimeout(() => {
+    //           this.navCtrl.pop();
+    //           //this.showTimeResetAlert();
+    //         },500)
+    //       }
+    //     }
+    //   ]
+    // });
+    // alert.present();
+  };//
+
+
+
+
+  isAnswerCorrect(question:any){
+    let isAnswerCorrect:string = '';
+    if(question.questiondata.isCorrect == 'NA'){
+      isAnswerCorrect = "";
+    }else if(question.questiondata.isCorrect == true){
+      isAnswerCorrect = 'Correct';
+    }else{
+      isAnswerCorrect = 'Incorrect';
+    }
+    return isAnswerCorrect;
+  };//
+
+  setAnswerColor(question:any):string{
+    let answerColor:string = '';
+    if(question.questiondata.isCorrect == 'NA'){
+      answerColor = "";
+    }else if(question.questiondata.isCorrect == true){
+      answerColor = 'secondary';
+    }else{
+      answerColor = 'danger';
+    }
+    return answerColor;
+  };//
+
+  gotoPreviousScreen(){
+    this.navCtrl.pop();
+  }
 
 
 
